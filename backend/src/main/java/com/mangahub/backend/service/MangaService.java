@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.mangahub.backend.dto.request.MangaCreateRequest;
 import com.mangahub.backend.dto.response.MangaResponse;
+import com.mangahub.backend.exception.AppException;
+import com.mangahub.backend.exception.ErrorCode;
 import com.mangahub.backend.model.Manga;
 import com.mangahub.backend.repository.MangaRepository;
 
@@ -60,7 +62,7 @@ public class MangaService {
                         .description(manga.getDescription())
                         .basePrice(manga.getBasePrice())
                         .build())
-                .orElseThrow(() -> new RuntimeException("Manga not found with id: " + id));
+                .orElseThrow(() -> new AppException(ErrorCode.MANGA_NOT_FOUND));
     }
 
 }
