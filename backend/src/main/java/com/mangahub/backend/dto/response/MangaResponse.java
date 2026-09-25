@@ -1,5 +1,6 @@
 package com.mangahub.backend.dto.response;
 
+import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,9 +15,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MangaResponse {
-    Long id;
+    String id;
     String title;
     String author;
     String description;
-    Double basePrice;
+    BigDecimal basePrice;
 }

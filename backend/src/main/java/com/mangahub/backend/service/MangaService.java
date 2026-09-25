@@ -51,7 +51,7 @@ public class MangaService {
                 .toList();
     }
 
-    public MangaResponse getById(Long id) {
+    public MangaResponse getById(String id) {
         return mangaRepository.findById(id)
                 .map(manga -> MangaResponse.builder()
                         .id(manga.getId())

@@ -35,7 +35,7 @@ public class MangaController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<MangaResponse> getMangaById(Long id) {
+    ApiResponse<MangaResponse> getMangaById(String id) {
         MangaResponse manga = mangaService.getById(id);
         return ApiResponse.<MangaResponse>builder()
                 .data(manga)

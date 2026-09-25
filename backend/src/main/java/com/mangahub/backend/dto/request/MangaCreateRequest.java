@@ -1,5 +1,6 @@
 package com.mangahub.backend.dto.request;
 
+import java.math.BigDecimal;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,6 +27,5 @@ public class MangaCreateRequest {
     String description;
 
     @NotNull(message = "Base price is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Base price must be greater than 0")
-    Double basePrice;
+    BigDecimal basePrice;
 }
