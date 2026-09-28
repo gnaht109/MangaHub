@@ -17,6 +17,9 @@ frontend/dist/
 .env
 *.env
 
+# Superpowers plans/specs
+docs/
+
 # OS
 .DS_Store
 Thumbs.db
