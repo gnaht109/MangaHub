@@ -3,6 +3,7 @@ package com.mangahub.backend.exception;
 import java.nio.file.AccessDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,13 +41,25 @@ public class GlobalExceptionHandler{
 
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse<Void>> handlingAccessDeniedException(AccessDeniedException ex) {
-        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+        ErrorCode errorCode = ErrorCode.FORBIDDEN;
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(
                 ApiResponse.<Void>builder()
                     .code(errorCode.getCode())
                     .message(errorCode.getMessage())
                     .build()
+        );
+    }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    ResponseEntity<ApiResponse<Void>> handlingBadCredentialsException(BadCredentialsException ex) {
+        ErrorCode errorCode = ErrorCode.BAD_CREDENTIALS;
+
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                ApiResponse.<Void>builder()
+                    .code(errorCode.getCode())
+                    .message(errorCode.getMessage())
+                    .build()       
         );
     }
 
@@ -63,4 +76,5 @@ public class GlobalExceptionHandler{
                         .message(message)
                         .build());
     }
+
 }

@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import com.mangahub.backend.dto.request.LoginRequest;
 import com.mangahub.backend.dto.request.RegisterRequest;
 import com.mangahub.backend.dto.response.AuthResponse;
+import com.mangahub.backend.enums.UserRole;
+import com.mangahub.backend.exception.AppException;
+import com.mangahub.backend.exception.ErrorCode;
 import com.mangahub.backend.model.User;
-import com.mangahub.backend.model.UserRole;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,7 +31,7 @@ public class AuthServiceImpl implements AuthService{
     @Transactional 
     public AuthResponse register(RegisterRequest request) {
         if(userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("User already exists");
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         User user = User.builder()
@@ -69,6 +71,7 @@ public class AuthServiceImpl implements AuthService{
                     .userId(user.getId())
                     .fullName(user.getFullName())
                     .email(user.getEmail())
+                    .role(user.getRole().name())
                     .build();
     }
 }
