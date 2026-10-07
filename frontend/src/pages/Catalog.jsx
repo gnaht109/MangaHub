@@ -13,7 +13,7 @@ import styles from './Catalog.module.css'
 
 function countLabel(count, query) {
   if (!query) return `${count} ${count === 1 ? 'volume' : 'volumes'}`
-  return `${count} ${count === 1 ? 'match' : 'matches'} for "${query}"`
+  return `${count} ${count === 1 ? 'match' : 'matches'} for “${query}”`
 }
 
 export default function Catalog() {
@@ -100,7 +100,7 @@ export default function Catalog() {
         )}
 
         {state.status === 'ready' && state.items.length > 0 && visible.length === 0 && (
-          <Notice title={`No volumes match "${query}".`} action={<Button variant="secondary" onClick={() => setParams({})}>Clear search</Button>}>
+          <Notice title={`No volumes match “${query}”.`} action={<Button variant="secondary" onClick={() => setParams({})}>Clear search</Button>}>
             Try a shorter title or the author's name.
           </Notice>
         )}
