@@ -1,6 +1,7 @@
 package com.mangahub.backend.model;
 
 import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,20 +29,20 @@ public class Manga {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(length = 36, updatable = false, nullable = false)
-    private String id;
+    String id;
  
     @Column(nullable = false)
-    private String title;
+    String title;
  
     @Column(nullable = false)
-    private String author;
+    String author;
  
     @Column(columnDefinition = "TEXT")
-    private String description;
+    String description;
  
     // The normal catalog price, separate from whatever discounted price
     // a FlashSaleItem gives it during a specific event.
     @Column(name = "price", precision = 10, scale = 2, nullable = false)
-    private BigDecimal basePrice;
+    BigDecimal basePrice;
 }
 

@@ -1,6 +1,7 @@
 package com.mangahub.backend.model;
 
 import java.time.Instant;
+import com.mangahub.backend.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
