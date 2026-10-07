@@ -21,7 +21,7 @@ describe('Catalog', () => {
   it('filters by ?q ignoring accents', async () => {
     listManga.mockResolvedValue(sampleManga)
     renderApp('/?q=dao')
-    expect(await screen.findByText('1 match for "dao"')).toBeTruthy()
+    expect(await screen.findByText('1 match for “dao”')).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Đảo Hải Tặc' })).toBeTruthy()
   })
 
@@ -31,7 +31,7 @@ describe('Catalog', () => {
     await screen.findByText('3 volumes')
     await userEvent.type(screen.getByLabelText('Search title or author'), 'zzz{Enter}')
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/?q=zzz'))
-    expect(screen.getByText('No volumes match "zzz".')).toBeTruthy()
+    expect(screen.getByText('No volumes match “zzz”.')).toBeTruthy()
     await userEvent.click(screen.getByRole('button', { name: 'Browse all' }))
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/'))
     expect(screen.getByText('3 volumes')).toBeTruthy()
