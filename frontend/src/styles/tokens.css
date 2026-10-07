@@ -1,0 +1,41 @@
+:root {
+  --paper: #ffffff;
+  --ink: #111111;
+  --ink-soft: #55585e;
+  --obi: #ffd400;
+  --sale: #e4002b;
+  --on-sale: #ffffff;
+  --jacket: #e8e9eb;
+  --jacket-ink: #8a8d93;
+
+  --font: "Archivo Variable", system-ui, sans-serif;
+  --fs-hook: clamp(3rem, 6vw, 5.5rem);
+  --fs-h1: 2.5rem;
+  --fs-h2: 1.75rem;
+  --fs-h3: 1.25rem;
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-micro: 0.75rem;
+
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s6: 48px;
+  --s8: 64px;
+  --s12: 96px;
+
+  --rule: 2px solid var(--ink);
+  --rule-thin: 1px solid var(--ink);
+
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --t-fast: 160ms;
+  --t-slide: 240ms;
+
+  --page-max: 1280px;
+  --gutter: var(--s4);
+}
+
+@media (max-width: 639px) {
+  :root { --gutter: var(--s2); --fs-h1: 2rem; }
+}
