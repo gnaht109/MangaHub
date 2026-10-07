@@ -29,7 +29,7 @@ export default function Catalog() {
   useEffect(() => {
     let active = true
     setState({ status: 'loading', items: [], error: null })
-    Promise.resolve(listManga())
+    listManga()
       .then((items) => active && setState({ status: 'ready', items: items ?? [], error: null }))
       .catch((error) => active && setState({ status: 'error', items: [], error }))
     return () => { active = false }
