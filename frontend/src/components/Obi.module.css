@@ -1,0 +1,16 @@
+.obi {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s1) var(--s2);
+  border: var(--rule);
+  font-stretch: 62%;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1;
+  text-decoration: none;
+}
+.normal { background: var(--obi); color: var(--ink); }
+.sale { background: var(--sale); color: var(--on-sale); border-color: var(--sale); }
+.upcoming { background: var(--paper); color: var(--ink); }
+.soldout { background: var(--ink); color: var(--paper); }
