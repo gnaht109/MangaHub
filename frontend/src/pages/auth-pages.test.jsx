@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderApp } from '../test/render.jsx'
 import { makeToken, customer, signInAs } from '../test/fixtures.js'
@@ -45,7 +45,7 @@ describe('Login', () => {
     renderApp('/login?next=%2Fmanga%2Fm1')
     await fillLogin()
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
-    expect(screen.getByTestId('location').textContent).toBe('/manga/m1')
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/manga/m1'))
   })
 
   it('ignores an external next target', () => {
@@ -64,7 +64,7 @@ describe('Signup', () => {
     await userEvent.type(screen.getByLabelText('Password'), 'secret')
     await userEvent.click(screen.getByRole('button', { name: 'Create account' }))
     expect(signup).toHaveBeenCalledWith({ fullName: 'Minh Nguyen', email: 'minh@example.com', password: 'secret' })
-    expect(screen.getByTestId('location').textContent).toBe('/')
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/'))
   })
 
   it('shows a duplicate email error from the server', async () => {
