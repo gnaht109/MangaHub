@@ -1,0 +1,13 @@
+.notice {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s3);
+  border: var(--rule);
+  border-left-width: var(--s1);
+  background: var(--paper);
+}
+.error { border-color: var(--sale); }
+.title { font-size: var(--fs-h2); }
+.error .title { color: var(--sale); }
+.body { max-width: 60ch; color: var(--ink-soft); }
+.action { display: flex; flex-wrap: wrap; gap: var(--s2); }
