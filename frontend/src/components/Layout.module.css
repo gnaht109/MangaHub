@@ -1,0 +1,8 @@
+.main { min-height: calc(100vh - 72px - 120px); }
+.footer {
+  margin-top: var(--s12);
+  padding: var(--s4) 0;
+  border-top: var(--rule);
+}
+.footer .condensed { font-size: 1.5rem; }
+.note { color: var(--ink-soft); font-size: var(--fs-small); }

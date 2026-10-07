@@ -1,11 +1,18 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router'
 import '@fontsource-variable/archivo/wdth.css'
 import './styles/tokens.css'
 import './styles/base.css'
+import { AuthProvider } from './auth/AuthContext.jsx'
+import AppRoutes from './routes.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <h1 className="condensed page">MangaHub</h1>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>,
 )
