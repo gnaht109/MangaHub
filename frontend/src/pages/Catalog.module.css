@@ -1,0 +1,36 @@
+.hook {
+  background: var(--obi);
+  border-bottom: var(--rule);
+  padding: var(--s6) 0 var(--s4);
+}
+.hookGrid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: var(--s4);
+  align-items: end;
+}
+.hookTitle { font-size: var(--fs-hook); }
+.hookSide { display: grid; gap: var(--s2); }
+.sub { font-size: var(--fs-body); max-width: 40ch; }
+.searchForm { display: grid; gap: var(--s2); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.strip {
+  justify-content: space-between;
+  margin-top: var(--s3);
+  padding: var(--s2) var(--s3);
+  font-size: 1.25rem;
+  color: var(--ink);
+  transition: background-color var(--t-fast) var(--ease);
+}
+.strip:hover { background: var(--obi); }
+.shelfSection { margin-top: var(--s4); }
+.shelfTitle {
+  padding-bottom: var(--s1);
+  border-bottom: var(--rule);
+  font-size: var(--fs-h2);
+}
+.shelfSection > [role="status"], .shelfSection > [role="alert"] { margin-top: var(--s3); }
+
+@media (max-width: 1023px) {
+  .hookGrid { grid-template-columns: 1fr; align-items: start; }
+}
