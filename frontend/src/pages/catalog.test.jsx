@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderApp } from '../test/render.jsx'
 import { sampleManga, signInAs, admin } from '../test/fixtures.js'
@@ -30,10 +30,10 @@ describe('Catalog', () => {
     renderApp('/')
     await screen.findByText('3 volumes')
     await userEvent.type(screen.getByLabelText('Search title or author'), 'zzz{Enter}')
-    expect(screen.getByTestId('location').textContent).toBe('/?q=zzz')
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/?q=zzz'))
     expect(screen.getByText('No volumes match "zzz".')).toBeTruthy()
     await userEvent.click(screen.getByRole('button', { name: 'Browse all' }))
-    expect(screen.getByTestId('location').textContent).toBe('/')
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/'))
     expect(screen.getByText('3 volumes')).toBeTruthy()
   })
 
