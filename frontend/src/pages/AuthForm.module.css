@@ -1,0 +1,11 @@
+.wrap { display: flex; justify-content: center; padding: var(--s8) var(--gutter); }
+.form {
+  display: grid;
+  gap: var(--s3);
+  width: 100%;
+  max-width: 440px;
+  padding: var(--s4);
+  border: var(--rule);
+}
+.switch { font-size: var(--fs-small); color: var(--ink-soft); }
+.switch a { color: var(--ink); font-weight: 600; }
