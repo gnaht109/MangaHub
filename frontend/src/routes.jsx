@@ -3,6 +3,7 @@ import Layout from './components/Layout.jsx'
 import Catalog from './pages/Catalog.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
+import MangaDetail from './pages/MangaDetail.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 export default function AppRoutes() {
@@ -12,6 +13,7 @@ export default function AppRoutes() {
         <Route index element={<Catalog />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
+        <Route path="manga/:id" element={<MangaDetail />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
