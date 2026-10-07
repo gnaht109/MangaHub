@@ -1,4 +1,4 @@
-package com.mangahub.backend.model;
+package com.mangahub.backend.enums;
 
 public enum UserRole {
     CUSTOMER,
