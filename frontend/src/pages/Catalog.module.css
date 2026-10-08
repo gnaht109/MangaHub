@@ -11,18 +11,18 @@
 }
 .hookTitle { font-size: var(--fs-hook); }
 .hookSide { display: grid; gap: var(--s2); }
-.sub { font-size: var(--fs-body); max-width: 40ch; }
+.sub { font-size: var(--fs-body); max-width: 40ch; text-wrap: pretty; }
 .searchForm { display: grid; gap: var(--s2); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.hook .actions > :first-child { background: var(--ink); color: var(--obi); }
 .strip {
   justify-content: space-between;
   margin-top: var(--s3);
   padding: var(--s2) var(--s3);
   font-size: 1.25rem;
-  color: var(--ink);
   transition: background-color var(--t-fast) var(--ease);
 }
-.strip:hover { background: var(--obi); }
+.strip:hover { background: var(--ink); }
 .shelfSection { margin-top: var(--s4); }
 .shelfTitle {
   padding-bottom: var(--s1);

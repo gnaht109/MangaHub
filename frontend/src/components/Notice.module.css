@@ -3,7 +3,6 @@
   gap: var(--s2);
   padding: var(--s3);
   border: var(--rule);
-  border-left-width: var(--s1);
   background: var(--paper);
 }
 .error { border-color: var(--sale); }

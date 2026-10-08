@@ -16,10 +16,10 @@ export default function FlashSale() {
   const [notified, setNotified] = useState(false)
   return (
     <>
-      <PageTitle variant="upcoming" kicker="Coming soon">Flash sales</PageTitle>
+      <PageTitle variant="sale">Flash sales</PageTitle>
       <div className={`page ${styles.body}`}>
         <p className={styles.lead}>
-          Limited-quantity drops on printed volumes. When a sale opens, each volume shows its sale price and how many are left.
+          Coming soon. Limited-quantity drops on printed volumes. When a sale opens, each volume shows its sale price and how many are left.
         </p>
         <ul className={styles.legend} aria-label="Obi states">
           {STATES.map((s) => (

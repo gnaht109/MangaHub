@@ -45,7 +45,7 @@ export default function AdminNewTitle() {
 
   return (
     <>
-      <PageTitle kicker="Admin">New title</PageTitle>
+      <PageTitle>Admin · New title</PageTitle>
       <div className={`page ${styles.body}`}>
         <form className={styles.form} onSubmit={onSubmit} noValidate>
           {created && (

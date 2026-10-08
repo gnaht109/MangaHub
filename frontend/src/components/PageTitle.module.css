@@ -4,5 +4,4 @@
   border-width: 0 0 2px;
 }
 .inner { display: grid; gap: var(--s1); }
-.kicker { font-size: var(--fs-small); letter-spacing: 0.08em; }
 .title { font-size: var(--fs-h1); }

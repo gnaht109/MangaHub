@@ -22,7 +22,7 @@ export default function AdminTitles() {
 
   return (
     <>
-      <PageTitle kicker="Admin">Titles</PageTitle>
+      <PageTitle>Admin · Titles</PageTitle>
       <div className={`page ${styles.body}`}>
         <div className={styles.toolbar}>
           <Button to="/admin/titles/new">Add title</Button>
