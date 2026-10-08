@@ -1,0 +1,28 @@
+.body { display: grid; gap: var(--s4); padding-top: var(--s6); padding-bottom: var(--s6); }
+.lead { max-width: 60ch; font-size: var(--fs-h3); }
+.legend {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: var(--rule);
+}
+.legendItem { display: grid; gap: var(--s1); padding: var(--s3) var(--s2); border-bottom: var(--rule); }
+.legendObi { padding: var(--s2); font-size: 1.25rem; }
+.legendLabel { font-weight: 600; }
+.legendMeaning { color: var(--ink-soft); font-size: var(--fs-small); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.cart {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: var(--s4);
+  align-items: start;
+  padding-top: var(--s6);
+  padding-bottom: var(--s6);
+}
+.summary { display: grid; gap: var(--s3); padding: var(--s3); border: var(--rule); }
+.summary h2 { font-size: var(--fs-h2); }
+.totals { display: flex; justify-content: space-between; border-top: var(--rule-thin); padding-top: var(--s2); }
+
+@media (max-width: 767px) {
+  .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cart { grid-template-columns: 1fr; }
+}
