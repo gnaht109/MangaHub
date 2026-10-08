@@ -25,9 +25,9 @@
   font-weight: 600;
   font-size: var(--fs-body);
 }
-.search { display: flex; margin-left: auto; }
+.search { display: flex; margin-left: auto; flex: 0 1 280px; min-width: 0; }
 .searchInput {
-  width: 220px;
+  flex: 1; min-width: 0; width: 100%;
   min-height: 40px;
   padding: 0 var(--s2);
   border: var(--rule);
@@ -62,7 +62,7 @@
   .menu { display: none; flex-basis: 100%; flex-direction: column; align-items: stretch; gap: var(--s2); }
   .open { display: flex; }
   .nav { flex-direction: column; gap: 0; }
-  .search { margin-left: 0; }
+  .search { margin-left: 0; flex: none; }
   .searchInput { flex: 1; width: auto; }
   .account { justify-content: space-between; }
 }
