@@ -35,11 +35,6 @@
   border-width: 2px 0;
   font-size: 2rem;
   font-variant-numeric: tabular-nums;
-  animation: obi-aside var(--t-slide) var(--ease) 200ms both;
-}
-@keyframes obi-aside {
-  from { transform: translateX(0); }
-  to { transform: translateX(30%); }
 }
 .micro { font-size: var(--fs-micro); letter-spacing: 0.08em; }
 .ghostInfo { min-height: 320px; border-top: var(--rule); }
