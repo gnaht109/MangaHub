@@ -75,9 +75,6 @@ export default function MangaDetail() {
       <div className={styles.info}>
         <h1 className={styles.title}>{manga.title}</h1>
         <p className={styles.author}>{manga.author}</p>
-        <Obi className={styles.priceObi}>
-          <span className={styles.price}>{formatPrice(manga.basePrice)}</span>
-        </Obi>
         <p className={cx(styles.description, !manga.description && styles.muted)}>
           {manga.description || 'No description yet.'}
         </p>

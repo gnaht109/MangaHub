@@ -39,15 +39,19 @@
 }
 @keyframes obi-aside {
   from { transform: translateX(0); }
-  to { transform: translateX(var(--s2)); }
+  to { transform: translateX(30%); }
 }
 .micro { font-size: var(--fs-micro); letter-spacing: 0.08em; }
 .ghostInfo { min-height: 320px; border-top: var(--rule); }
 .info { display: grid; align-content: start; gap: var(--s3); }
-.title { font-size: var(--fs-h1); font-weight: 800; line-height: 1.1; }
+.title {
+  font-size: var(--fs-h1);
+  font-stretch: 62%;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.95;
+}
 .author { color: var(--ink-soft); font-size: var(--fs-h3); }
-.priceObi { justify-self: start; padding: var(--s2) var(--s3); }
-.price { font-size: 2.5rem; font-variant-numeric: tabular-nums; }
 .description { max-width: 60ch; white-space: pre-line; }
 .muted { color: var(--ink-soft); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--s2); }

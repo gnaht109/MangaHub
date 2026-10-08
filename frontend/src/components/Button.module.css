@@ -16,7 +16,7 @@
   transition: transform var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
 }
 .button:hover:not(:disabled) { transform: translateY(-2px); }
-.button:disabled { opacity: 0.4; cursor: not-allowed; }
+.button:disabled { background: var(--jacket); color: var(--ink-soft); border-color: var(--ink-soft); cursor: not-allowed; }
 .primary { background: var(--obi); color: var(--ink); }
 .secondary { background: var(--paper); color: var(--ink); }
 .secondary:hover:not(:disabled) { background: var(--obi); }

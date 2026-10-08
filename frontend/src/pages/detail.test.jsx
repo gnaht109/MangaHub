@@ -17,7 +17,7 @@ describe('MangaDetail', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Đảo Hải Tặc' })).toBeTruthy()
     expect(getManga).toHaveBeenCalledWith('m1')
     expect(screen.getByText('Eiichiro Oda')).toBeTruthy()
-    expect(screen.getAllByText('25.000 ₫').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('25.000 ₫')).toHaveLength(1)
     expect(screen.getByText('Pirates.')).toBeTruthy()
   })
 

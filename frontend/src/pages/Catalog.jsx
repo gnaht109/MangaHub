@@ -68,9 +68,8 @@ export default function Catalog() {
       </section>
 
       <div className="page">
-        <Obi as={Link} to="/flash-sale" variant="upcoming" className={styles.strip}>
-          <span>Flash sales — coming soon</span>
-          <span aria-hidden="true">→</span>
+        <Obi as={Link} to="/flash-sale" variant="sale" className={styles.strip}>
+          Flash sales — coming soon
         </Obi>
       </div>
 
