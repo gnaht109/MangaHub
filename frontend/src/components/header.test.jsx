@@ -1,10 +1,15 @@
-import { describe, it, expect } from 'vitest'
-import { screen } from '@testing-library/react'
+import { describe, it, beforeEach, expect, vi } from 'vitest'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderApp } from '../test/render.jsx'
+import { listManga } from '../lib/manga.js'
 import { signInAs, admin, customer } from '../test/fixtures.js'
 
+vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
+
 describe('Header and layout', () => {
+  beforeEach(() => listManga.mockResolvedValue([]))
+
   it('shows nav and Sign in for guests', () => {
     renderApp('/nowhere')
     const nav = screen.getByRole('navigation', { name: 'Main' })
@@ -31,6 +36,14 @@ describe('Header and layout', () => {
     await userEvent.type(screen.getByLabelText('Search the store'), '  naruto ')
     await userEvent.click(screen.getByRole('button', { name: 'Search' }))
     expect(screen.getByTestId('location').textContent).toBe('/?q=naruto')
+  })
+
+  it('clears the search box when navigating away from ?q', async () => {
+    renderApp('/?q=naruto')
+    const input = screen.getByLabelText('Search the store')
+    expect(input.value).toBe('naruto')
+    await userEvent.click(screen.getByRole('link', { name: 'Catalog' }))
+    await waitFor(() => expect(input.value).toBe(''))
   })
 
   it('toggles the mobile menu state', async () => {

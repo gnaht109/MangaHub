@@ -8,7 +8,8 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    execArgv: ['--no-experimental-webstorage'], // Node 25's built-in localStorage shadows jsdom's
+    // Node 25+ has built-in webstorage on, which shadows jsdom's localStorage
+    execArgv: Number(process.versions.node.split('.')[0]) >= 25 ? ['--no-experimental-webstorage'] : [],
     setupFiles: './src/test/setup.js',
   },
 })

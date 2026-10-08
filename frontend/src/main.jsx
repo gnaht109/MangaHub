@@ -5,13 +5,16 @@ import '@fontsource-variable/archivo/wdth.css'
 import './styles/tokens.css'
 import './styles/base.css'
 import { AuthProvider } from './auth/AuthContext.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 import AppRoutes from './routes.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <BrowserRouter>
-        <AppRoutes />
+        <ErrorBoundary>
+          <AppRoutes />
+        </ErrorBoundary>
       </BrowserRouter>
     </AuthProvider>
   </StrictMode>,
