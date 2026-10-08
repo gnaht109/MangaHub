@@ -20,6 +20,19 @@ frontend/dist/
 # Superpowers plans/specs
 docs/
 
+# AI assistant / design tooling (local only, never commit)
+.superpowers/
+.impeccable/
+.claude/
+CLAUDE.md
+/PRODUCT.md
+/DESIGN.md
+.github/agents/
+.github/skills/
+.github/hooks/
+.github/modernize/
+.github/copilot-instructions.md
+
 # OS
 .DS_Store
 Thumbs.db
