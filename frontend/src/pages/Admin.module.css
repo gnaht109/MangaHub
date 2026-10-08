@@ -1,0 +1,29 @@
+.body { display: grid; gap: var(--s4); padding-top: var(--s6); padding-bottom: var(--s6); }
+.toolbar { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  max-width: 640px;
+  border-top: var(--rule);
+}
+.details dt, .details dd { padding: var(--s2) 0; border-bottom: var(--rule-thin); }
+.details dt { padding-right: var(--s4); font-weight: 600; }
+.table { width: 100%; border-collapse: collapse; border-top: var(--rule); }
+.table th, .table td { padding: var(--s2) var(--s1); text-align: left; border-bottom: var(--rule-thin); }
+.table th {
+  font-stretch: 62%;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--fs-small);
+  letter-spacing: 0.04em;
+}
+.table a { font-weight: 600; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.table th.num, .table td.num { text-align: right; }
+.form { display: grid; gap: var(--s3); max-width: 640px; }
+
+@media (max-width: 639px) {
+  .table thead { display: none; }
+  .table tr { display: grid; padding: var(--s2) 0; border-bottom: var(--rule-thin); }
+  .table td { padding: 0; border: 0; text-align: left; }
+}
