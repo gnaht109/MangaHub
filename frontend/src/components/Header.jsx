@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { cx } from '../lib/cx.js'
@@ -17,6 +17,7 @@ export default function Header() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const [query, setQuery] = useState(params.get('q') ?? '')
+  useEffect(() => setQuery(params.get('q') ?? ''), [params])
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
 
