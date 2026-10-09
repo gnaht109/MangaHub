@@ -41,6 +41,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/manga/**").permitAll() // remember to delete this
                         .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

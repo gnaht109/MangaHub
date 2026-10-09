@@ -8,6 +8,7 @@ import com.mangahub.backend.dto.request.MangaCreateRequest;
 import com.mangahub.backend.dto.response.MangaResponse;
 import com.mangahub.backend.exception.AppException;
 import com.mangahub.backend.exception.ErrorCode;
+import com.mangahub.backend.mapper.MangaMapper;
 import com.mangahub.backend.model.Manga;
 import com.mangahub.backend.repository.MangaRepository;
 
@@ -21,47 +22,23 @@ import lombok.experimental.FieldDefaults;
 public class MangaService {
 
     MangaRepository mangaRepository;
+    MangaMapper mangaMapper;
 
     public MangaResponse createManga(MangaCreateRequest mangaCreateRequest) {
-        Manga manga = Manga.builder()
-                .title(mangaCreateRequest.getTitle())
-                .author(mangaCreateRequest.getAuthor())
-                .description(mangaCreateRequest.getDescription())
-                .basePrice(mangaCreateRequest.getBasePrice())
-                .build();
+        Manga manga = mangaMapper.toEntityManga(mangaCreateRequest);
 
         Manga savedManga = mangaRepository.save(manga);
 
-        return MangaResponse.builder()
-                .id(savedManga.getId())
-                .title(savedManga.getTitle())
-                .author(savedManga.getAuthor())
-                .description(savedManga.getDescription())
-                .basePrice(savedManga.getBasePrice())
-                .build();
+        return mangaMapper.toMangaResponse(savedManga);
     }
 
     public List<MangaResponse> getAll(){
-        return mangaRepository.findAll().stream()
-                .map(manga -> MangaResponse.builder()
-                        .id(manga.getId())
-                        .title(manga.getTitle())
-                        .author(manga.getAuthor())
-                        .description(manga.getDescription())
-                        .basePrice(manga.getBasePrice())
-                        .build())
-                .toList();
+        return mangaMapper.toMangaResponses(mangaRepository.findAll());
     }
 
     public MangaResponse getById(String id) {
         return mangaRepository.findById(id)
-                .map(manga -> MangaResponse.builder()
-                        .id(manga.getId())
-                        .title(manga.getTitle())
-                        .author(manga.getAuthor())
-                        .description(manga.getDescription())
-                        .basePrice(manga.getBasePrice())
-                        .build())
+                .map(mangaMapper::toMangaResponse)
                 .orElseThrow(() -> new AppException(ErrorCode.MANGA_NOT_FOUND));
     }
 
