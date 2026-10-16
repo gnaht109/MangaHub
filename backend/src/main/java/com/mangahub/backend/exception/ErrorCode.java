@@ -14,6 +14,7 @@ public enum ErrorCode {
     INVALID_INPUT(400, "Invalid input", HttpStatus.BAD_REQUEST),
     BAD_CREDENTIALS(401, "Your email or your password is incorrect", HttpStatus.UNAUTHORIZED),
     EMAIL_ALREADY_EXISTS(409, "This email already exists.", HttpStatus.CONFLICT),
+    GENRE_ALREADY_EXISTS(409, "This genre already exists", HttpStatus.CONFLICT),
     //MANGA
     MANGA_NOT_FOUND(404, "Manga not found", HttpStatus.NOT_FOUND),
 
