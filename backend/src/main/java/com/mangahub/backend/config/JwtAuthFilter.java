@@ -40,6 +40,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Get authentication context from SecurityContext, 
+        // if null then get user details and set the token in the SecurityContext -> next request
         try {
             String token = authHeader.substring(7);
             String userEmail = jwtService.extractUsername(token);
