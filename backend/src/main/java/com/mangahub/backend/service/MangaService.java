@@ -26,29 +26,17 @@ public class MangaService {
     MangaMapper mangaMapper;
 
     public MangaResponse createManga(MangaCreateRequest mangaCreateRequest) {
-        Manga manga = Manga.builder()
-                .title(mangaCreateRequest.getTitle())
-                .author(mangaCreateRequest.getAuthor())
-                .description(mangaCreateRequest.getDescription())
-                .basePrice(mangaCreateRequest.getBasePrice())
-                .build();
+        Manga manga = mangaMapper.toEntityManga(mangaCreateRequest);
 
         Manga savedManga = mangaRepository.save(manga);
 
-        return MangaResponse.builder()
-                .id(savedManga.getId())
-                .title(savedManga.getTitle())
-                .author(savedManga.getAuthor())
-                .description(savedManga.getDescription())
-                .basePrice(savedManga.getBasePrice())
-                .build();
+        return mangaMapper.toMangaResponse(savedManga);
     }
 
     public List<MangaResponse> getAll(){
-        return mangaRepository.findAll()
-                                .stream()
-                                .map(mangaMapper :: toMangaResponse)
-                                .collect(Collectors.toList());
+
+        return mangaMapper.toMangaResponses(mangaRepository.findAll());
+
     }
 
     public MangaResponse getById(String id) {

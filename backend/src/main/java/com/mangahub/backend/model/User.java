@@ -2,12 +2,14 @@ package com.mangahub.backend.model;
 
 import java.time.Instant;
 import com.mangahub.backend.enums.UserRole;
+import lombok.AccessLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "users")
@@ -16,28 +18,29 @@ import lombok.Setter;
 @NoArgsConstructor // create User()
 @AllArgsConstructor // create User(any args)
 @Builder // User.builder()
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(length = 36, updatable = false, nullable = false)
-    private String id;
+    String id;
 
     @Column(name = "name", nullable = false)
-    private String fullName;
+    String fullName;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    String email;
 
     @Column(name = "password_hash", nullable = false)
-    private String password;
+    String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private UserRole role = UserRole.CUSTOMER;
+    UserRole role = UserRole.CUSTOMER;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+    Instant createdAt;
 
     @PrePersist
     void onCreate() {
