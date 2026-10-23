@@ -1,6 +1,7 @@
 package com.mangahub.backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,9 @@ public class MangaService {
     }
 
     public List<MangaResponse> getAll(){
+
         return mangaMapper.toMangaResponses(mangaRepository.findAll());
+
     }
 
     public MangaResponse getById(String id) {

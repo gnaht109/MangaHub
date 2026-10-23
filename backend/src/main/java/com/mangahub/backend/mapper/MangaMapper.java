@@ -10,6 +10,9 @@ import com.mangahub.backend.dto.request.MangaCreateRequest;
 import com.mangahub.backend.dto.response.MangaResponse;
 import com.mangahub.backend.model.Manga;
 
+import com.mangahub.backend.dto.response.MangaResponse;
+import com.mangahub.backend.model.Manga;
+
 @Mapper(componentModel = "spring")
 public interface MangaMapper {
     MangaMapper INSTANCE = Mappers.getMapper(MangaMapper.class);
