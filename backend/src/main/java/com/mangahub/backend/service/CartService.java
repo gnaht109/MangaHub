@@ -6,15 +6,21 @@ import com.mangahub.backend.repository.CartRepository;
 import com.mangahub.backend.repository.MangaRepository;
 import com.mangahub.backend.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Service
+@Transactional 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CartService {
     CartRepository cartRepository;
-    UserRepository userRepository;
     MangaRepository mangaRepository;
+
+    // public CartResponse getCart(Long userId){
+        
+    // }
+
 }

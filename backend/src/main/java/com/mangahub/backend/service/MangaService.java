@@ -1,6 +1,7 @@
 package com.mangahub.backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,7 @@ import com.mangahub.backend.dto.request.MangaCreateRequest;
 import com.mangahub.backend.dto.response.MangaResponse;
 import com.mangahub.backend.exception.AppException;
 import com.mangahub.backend.exception.ErrorCode;
+import com.mangahub.backend.mapper.MangaMapper;
 import com.mangahub.backend.model.Manga;
 import com.mangahub.backend.repository.MangaRepository;
 
@@ -21,6 +23,7 @@ import lombok.experimental.FieldDefaults;
 public class MangaService {
 
     MangaRepository mangaRepository;
+    MangaMapper mangaMapper;
 
     public MangaResponse createManga(MangaCreateRequest mangaCreateRequest) {
         Manga manga = Manga.builder()
@@ -42,26 +45,15 @@ public class MangaService {
     }
 
     public List<MangaResponse> getAll(){
-        return mangaRepository.findAll().stream()
-                .map(manga -> MangaResponse.builder()
-                        .id(manga.getId())
-                        .title(manga.getTitle())
-                        .author(manga.getAuthor())
-                        .description(manga.getDescription())
-                        .basePrice(manga.getBasePrice())
-                        .build())
-                .toList();
+        return mangaRepository.findAll()
+                                .stream()
+                                .map(mangaMapper :: toMangaResponse)
+                                .collect(Collectors.toList());
     }
 
     public MangaResponse getById(String id) {
         return mangaRepository.findById(id)
-                .map(manga -> MangaResponse.builder()
-                        .id(manga.getId())
-                        .title(manga.getTitle())
-                        .author(manga.getAuthor())
-                        .description(manga.getDescription())
-                        .basePrice(manga.getBasePrice())
-                        .build())
+                .map(mangaMapper::toMangaResponse)
                 .orElseThrow(() -> new AppException(ErrorCode.MANGA_NOT_FOUND));
     }
 

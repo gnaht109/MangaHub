@@ -1,5 +1,6 @@
 package com.mangahub.backend.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mangahub.backend.enums.CartStatus;
@@ -15,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -38,16 +40,12 @@ public class Cart {
     @Column(length = 36, updatable = false, nullable = false)
     String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
-    //@Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    CartStatus status = CartStatus.ACTIVE;
-
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<CartItem> items;
+    @Builder.Default
+    List<CartItem> items = new ArrayList<>();
 
 }
