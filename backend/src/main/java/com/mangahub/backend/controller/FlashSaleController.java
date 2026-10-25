@@ -47,13 +47,13 @@ public class FlashSaleController {
                         .build();
     }
 
-    @GetMapping("/{id}")
-    ApiResponse<FlashSaleResponse> getFlashSaleById(@PathVariable("id") String id) {
-        FlashSaleResponse flashSale = flashSaleService.getById(id);
-        return ApiResponse.<FlashSaleResponse>builder()
-                        .data(flashSale)
-                        .build();
-    }
+    // @GetMapping("/{id}")
+    // ApiResponse<FlashSaleResponse> getFlashSaleById(@PathVariable("id") Long id) {
+    //     FlashSaleResponse flashSale = flashSaleService.getById(id);
+    //     return ApiResponse.<FlashSaleResponse>builder()
+    //                     .data(flashSale)
+    //                     .build();
+    // }
 
     @PostMapping
     ApiResponse<FlashSaleResponse> createFlashSale(@Valid @RequestBody FlashSaleCreateRequest request) {
@@ -64,7 +64,7 @@ public class FlashSaleController {
     }
 
     @PostMapping("/{id}/cancel")
-    ApiResponse<FlashSaleResponse> cancelFlashSale(@PathVariable("id") String id) {
+    ApiResponse<FlashSaleResponse> cancelFlashSale(@PathVariable("id") Long id) {
         FlashSaleResponse cancelledFlashSale = flashSaleService.cancelFlashSale(id);
         return ApiResponse.<FlashSaleResponse>builder()
                         .data(cancelledFlashSale)

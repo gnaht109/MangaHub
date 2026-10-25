@@ -21,7 +21,7 @@ import lombok.experimental.FieldDefaults;
 public class FlashSaleItemCreateRequest {
     
     @NotBlank(message = "Manga id is required")
-    String mangaId;
+    Long mangaId;
 
     @NotNull(message = "Discounted price is required")
     @DecimalMin(value = "0.00", inclusive = false, message = "Discounted price must be greater than 0")

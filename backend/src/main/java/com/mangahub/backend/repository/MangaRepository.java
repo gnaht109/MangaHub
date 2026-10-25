@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.mangahub.backend.model.Manga;
 
-public interface MangaRepository extends JpaRepository<Manga, String> {
-    
+public interface MangaRepository extends JpaRepository<Manga, Long> {
+    boolean existsByTitle(String title);
 }

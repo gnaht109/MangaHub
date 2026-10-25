@@ -2,6 +2,7 @@ package com.mangahub.backend.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.mangahub.backend.enums.CartStatus;
 
@@ -36,16 +37,38 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Cart {
     @Id 
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Column(length = 36, updatable = false, nullable = false)
-    String id;
+    Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     List<CartItem> items = new ArrayList<>();
 
+    // ------------------Helper methods------------------//
+        public void addOrIncreaseItem(Manga manga, int quantity) {
+        findItem(manga.getId()).ifPresentOrElse(
+            existing -> existing.setQuantity(existing.getQuantity() + quantity),
+            () -> {
+                CartItem item = new CartItem();
+                item.setCart(this);
+                item.setManga(manga);
+                item.setQuantity(quantity);
+                items.add(item);
+            });
+    }
+
+    public Optional<CartItem> findItem(Long mangaId) {
+        return items.stream()
+            .filter(i -> i.getManga().getId().equals(mangaId))
+            .findFirst();
+    }
+
+    public boolean removeItem(Long mangaId){
+        return items.removeIf(i -> i.getManga().getId().equals(mangaId));
+    }
 }

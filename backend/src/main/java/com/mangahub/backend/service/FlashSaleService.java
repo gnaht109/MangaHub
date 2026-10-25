@@ -29,15 +29,17 @@ import com.mangahub.backend.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Service 
 @RequiredArgsConstructor 
+@FieldDefaults (level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class FlashSaleService {
     
-    private final UserRepository userRepository;
-    private final FlashSaleRepository flashSaleRepository;
-    private final FlashSaleMapper mapper;
-    private final MangaRepository mangaRepository;
+    UserRepository userRepository;
+    FlashSaleRepository flashSaleRepository;
+    FlashSaleMapper mapper;
+    MangaRepository mangaRepository;
 
     public List<FlashSaleResponse> getAll() {
         return mapper.toFlashSaleResponses(
@@ -51,7 +53,7 @@ public class FlashSaleService {
         );
     }
 
-    public FlashSaleResponse getById(String id) {
+    public FlashSaleResponse getById(Long id) {
         return flashSaleRepository.findById(id)
         .map(mapper::toFlashSaleResponse)
         .orElseThrow(() -> new AppException(ErrorCode.MANGA_NOT_FOUND));
@@ -97,7 +99,7 @@ public class FlashSaleService {
     }
 
     @Transactional 
-    public FlashSaleResponse cancelFlashSale(String id) {
+    public FlashSaleResponse cancelFlashSale(Long id) {
         FlashSale flashSale = flashSaleRepository.findById(id)
                     .orElseThrow(() -> new AppException(ErrorCode.FLASH_SALE_NOT_FOUND));
         
@@ -143,7 +145,7 @@ public class FlashSaleService {
         }
 
         // check for manga duplicates
-        Set<String> mangaIds = new HashSet<>();
+        Set<Long> mangaIds = new HashSet<>();
         for(FlashSaleItemCreateRequest item : items) {
             // add() returns false if there is a duplicate
             if(!mangaIds.add(item.getMangaId())) {
@@ -152,7 +154,7 @@ public class FlashSaleService {
         }
 
         // get and map out mangas with their id
-        Map<String, Manga> mangaById = mangaRepository.findAllById(mangaIds)
+        Map<Long, Manga> mangaById = mangaRepository.findAllById(mangaIds)
                             .stream().collect(Collectors.toMap(manga -> manga.getId(), Function.identity()));
 
         // check if any manga is missing from the items

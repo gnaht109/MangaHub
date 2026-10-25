@@ -29,9 +29,9 @@ import lombok.experimental.FieldDefaults;
 public class FlashSaleItem {
     
     @Id 
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 36, updatable = false, nullable = false)
-    String id;
+    Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "flash_sale_id", nullable = false)

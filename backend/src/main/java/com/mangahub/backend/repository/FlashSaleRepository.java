@@ -12,14 +12,14 @@ import java.time.LocalDate;
 
 
 
-public interface FlashSaleRepository extends JpaRepository<FlashSale, String> {
+public interface FlashSaleRepository extends JpaRepository<FlashSale, Long> {
 
     boolean existsByNameIgnoreCase(String name);
 
     // Load flash sale items
-    @Override 
-    @EntityGraph(attributePaths = "items")
-    Optional<FlashSale> findById(String id);
+    // @Override 
+    // @EntityGraph(attributePaths = "items")
+    // Optional<FlashSale> findById(Long id);
 
 
     @EntityGraph(attributePaths = "items")

@@ -25,9 +25,9 @@ import lombok.experimental.FieldDefaults;
 public class Genre {
     
     @Id 
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 36, updatable = false, nullable = false)
-    String id;
+    Long id;
 
     @Column(nullable = false, unique = true, length = 50)
     String name;

@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartResponse {
-    String id;
+    Long id;
     List<CartItemResponse> items;
     BigDecimal subTotal;
 

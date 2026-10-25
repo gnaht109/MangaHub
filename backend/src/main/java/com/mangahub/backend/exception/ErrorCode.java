@@ -18,6 +18,7 @@ public enum ErrorCode {
     
     // MANGA
     MANGA_NOT_FOUND(404, "Manga not found", HttpStatus.NOT_FOUND),
+    MANGA_ALREADY_EXISTS(409, "This manga already exists.", HttpStatus.CONFLICT),
     
     // FLASHSALE
     INVALID_FLASH_SALE_DATES(400, "The end date cannot be set before the starting date or today's date.", HttpStatus.BAD_REQUEST),

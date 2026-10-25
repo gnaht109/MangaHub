@@ -14,9 +14,9 @@ import lombok.experimental.FieldDefaults;
 @Builder 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FlashSaleItemResponse {
-    String id;
-    String mangaId;
-    String flashSaleId;
+    Long id;
+    Long mangaId;
+    Long flashSaleId;
     BigDecimal discountedPrice;
     Integer saleQuantityLimit;
     Integer quantitySold;

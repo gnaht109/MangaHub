@@ -26,6 +26,10 @@ public class MangaService {
     MangaMapper mangaMapper;
 
     public MangaResponse createManga(MangaCreateRequest mangaCreateRequest) {
+        String title = mangaCreateRequest.getTitle().trim();
+        if (mangaRepository.existsByTitle(title)) {
+            throw new AppException(ErrorCode.MANGA_ALREADY_EXISTS);
+        }
         Manga manga = mangaMapper.toEntityManga(mangaCreateRequest);
 
         Manga savedManga = mangaRepository.save(manga);
@@ -39,10 +43,10 @@ public class MangaService {
 
     }
 
-    public MangaResponse getById(String id) {
-        return mangaRepository.findById(id)
-                .map(mangaMapper::toMangaResponse)
+    public MangaResponse getById(Long id) {
+        Manga manga = mangaRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.MANGA_NOT_FOUND));
+        return mangaMapper.toMangaResponse(manga);
     }
 
 }

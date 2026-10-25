@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 public class AddCartItemRequest {
     @NotNull
-    Long productId;
+    Long mangaId;
 
     @Min(1)
     @Max(10)

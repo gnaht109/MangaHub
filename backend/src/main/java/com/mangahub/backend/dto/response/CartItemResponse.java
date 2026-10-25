@@ -17,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItemResponse {
-    String id;
-    String mangaId;
+    Long id;
+    Long mangaId;
     String title;
     int quantity;
     BigDecimal unitPrice;

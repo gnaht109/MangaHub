@@ -13,6 +13,7 @@ import com.mangahub.backend.dto.request.MangaCreateRequest;
 import com.mangahub.backend.dto.response.ApiResponse;
 import com.mangahub.backend.dto.response.MangaResponse;
 import com.mangahub.backend.service.MangaService;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class MangaController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<MangaResponse> getMangaById(String id) {
+    ApiResponse<MangaResponse> getMangaById(@PathVariable Long id) {
         MangaResponse manga = mangaService.getById(id);
         return ApiResponse.<MangaResponse>builder()
                 .data(manga)

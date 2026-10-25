@@ -27,6 +27,8 @@ public class AuthServiceImpl implements AuthService{
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
     private final JwtService jwtService;
+
+    
     @Override 
     @Transactional 
     public AuthResponse register(RegisterRequest request) {

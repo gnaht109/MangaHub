@@ -13,6 +13,6 @@ import lombok.experimental.FieldDefaults;
 @Builder 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GenreResponse {
-    String id;
+    Long id;
     String name;
 }

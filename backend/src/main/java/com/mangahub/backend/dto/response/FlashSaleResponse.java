@@ -16,11 +16,11 @@ import lombok.experimental.FieldDefaults;
 @Builder 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FlashSaleResponse {
-    String id;
+    Long id;
     String name;
     LocalDate startDate;
     LocalDate endDate;
     FlashSaleStatus status;
-    String userId;
+    Long userId;
     List<FlashSaleItemResponse> items;
 }
