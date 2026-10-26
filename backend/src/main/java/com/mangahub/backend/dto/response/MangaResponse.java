@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MangaResponse {
-    String id;
+    Long id;
     String title;
     String author;
     String description;

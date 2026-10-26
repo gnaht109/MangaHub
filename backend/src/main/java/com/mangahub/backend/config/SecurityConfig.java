@@ -41,8 +41,11 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/manga/**").permitAll() // remember to change this to .hasRole("ADMIN")
-                        .requestMatchers("/api/genres/**").permitAll() // remember to change this to .hasRole("ADMIN")
+                        // remember to change these to .hasRole("ADMIN")
+                        .requestMatchers("/api/manga/**").permitAll()
+                        .requestMatchers("/api/genres/**").permitAll() 
+                        .requestMatchers("/api/flash-sales/**").permitAll()
+                        .requestMatchers("/api/cart/**").authenticated()
                         .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
@@ -55,7 +58,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8080"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 

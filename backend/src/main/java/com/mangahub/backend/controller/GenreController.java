@@ -7,13 +7,15 @@ import com.mangahub.backend.dto.request.GenreCreateRequest;
 import com.mangahub.backend.dto.response.ApiResponse;
 import com.mangahub.backend.dto.response.GenreResponse;
 import com.mangahub.backend.service.GenreService;
+
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import java.util.List;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController 
 @RequestMapping("/api/genres")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GenreController {

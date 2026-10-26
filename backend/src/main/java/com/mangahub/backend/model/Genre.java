@@ -1,6 +1,5 @@
 package com.mangahub.backend.model;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,9 +25,9 @@ import lombok.experimental.FieldDefaults;
 public class Genre {
     
     @Id 
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 36, updatable = false, nullable = false)
-    String id;
+    Long id;
 
     @Column(nullable = false, unique = true, length = 50)
     String name;

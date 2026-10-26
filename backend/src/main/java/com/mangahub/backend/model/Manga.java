@@ -27,9 +27,9 @@ import lombok.experimental.FieldDefaults;
 public class Manga {
  
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 36, updatable = false, nullable = false)
-    String id;
+    Long id;
  
     @Column(nullable = false)
     String title;
