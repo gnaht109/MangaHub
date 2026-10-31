@@ -48,6 +48,15 @@ describe('Catalog', () => {
     expect(await screen.findByRole('link', { name: /flash sales — live now/i })).toBeTruthy()
   })
 
+  it('shows no strip for an active sale with no items', async () => {
+    listManga.mockResolvedValue(sampleManga)
+    listFlashSales.mockResolvedValue([sale({ items: [] })])
+    renderApp('/')
+    await screen.findByText('3 volumes')
+    await waitFor(() => expect(listFlashSales).toHaveBeenCalled())
+    expect(screen.queryByRole('link', { name: /live now/i })).toBeNull()
+  })
+
   it('shows no strip for an upcoming sale', async () => {
     listManga.mockResolvedValue(sampleManga)
     listFlashSales.mockResolvedValue([sale({ status: 'UPCOMING', items: [item('m1', 15000)] })])

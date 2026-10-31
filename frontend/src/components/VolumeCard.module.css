@@ -37,6 +37,7 @@
 }
 .price { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
 .micro { display: flex; flex-wrap: wrap; gap: 0 var(--s1); font-size: var(--fs-micro); letter-spacing: 0.08em; font-variant-numeric: tabular-nums; }
+.micro s { font-size: var(--fs-small); font-weight: 500; font-stretch: 100%; letter-spacing: 0; }
 .hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .card:hover .jacket, .card:focus-visible .jacket { outline-color: var(--ink); }
 .card:hover .obi, .card:focus-visible .obi { transform: translateY(var(--s1)); }

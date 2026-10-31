@@ -77,7 +77,7 @@ export default function Catalog() {
         </div>
       </section>
 
-      {sales.some((s) => s.status === 'ACTIVE') && (
+      {sales.some((s) => s.status === 'ACTIVE' && s.items.length > 0) && (
         <div className="page">
           <Obi as={Link} to="/flash-sale" variant="sale" className={styles.strip}>
             Flash sales — live now
