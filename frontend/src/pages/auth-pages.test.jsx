@@ -6,6 +6,7 @@ import { makeToken, customer, signInAs } from '../test/fixtures.js'
 import { ApiError } from '../lib/api.js'
 import { login, signup } from '../lib/auth.js'
 
+vi.mock('../lib/flashSale.js', () => ({ listFlashSales: vi.fn(async () => []) }))
 vi.mock('../lib/auth.js', () => ({ login: vi.fn(), signup: vi.fn() }))
 
 async function fillLogin() {

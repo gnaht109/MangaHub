@@ -1,11 +1,11 @@
 import VolumeCard from './VolumeCard.jsx'
 import styles from './Shelf.module.css'
 
-export default function Shelf({ items }) {
+export default function Shelf({ items, salePrices }) {
   return (
     <ul className={styles.shelf}>
       {items.map((manga) => (
-        <li key={manga.id} className={styles.slot}><VolumeCard manga={manga} /></li>
+        <li key={manga.id} className={styles.slot}><VolumeCard manga={manga} sale={salePrices?.get(String(manga.id))} /></li>
       ))}
     </ul>
   )

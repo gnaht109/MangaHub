@@ -6,6 +6,7 @@ import { listManga } from '../lib/manga.js'
 import { getCart } from '../lib/cart.js'
 import { signInAs, admin, customer } from '../test/fixtures.js'
 
+vi.mock('../lib/flashSale.js', () => ({ listFlashSales: vi.fn(async () => []) }))
 vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
 vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(async () => ({ id: 1, items: [], subTotal: 0 })), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
 

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { listManga } from '../lib/manga.js'
+import { listFlashSales } from '../lib/flashSale.js'
+import { activePrices } from '../lib/sales.js'
 import { filterManga } from '../lib/search.js'
 import { cx } from '../lib/cx.js'
 import Obi from '../components/Obi.jsx'
@@ -23,6 +25,7 @@ export default function Catalog() {
   const [draft, setDraft] = useState(query)
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState({ status: 'loading', items: [], error: null })
+  const [sales, setSales] = useState([])
 
   useEffect(() => setDraft(query), [query])
 
@@ -34,6 +37,13 @@ export default function Catalog() {
       .catch((error) => active && setState({ status: 'error', items: [], error }))
     return () => { active = false }
   }, [attempt])
+
+  useEffect(() => {
+    let active = true
+    // Sales are decoration: on failure, base prices render and no error is shown.
+    listFlashSales().then((list) => active && setSales(list ?? [])).catch(() => {})
+    return () => { active = false }
+  }, [])
 
   function onSearch(event) {
     event.preventDefault()
@@ -55,7 +65,7 @@ export default function Catalog() {
         <div className={cx('page', styles.hookGrid)}>
           <h1 id="hook-title" className={cx('condensed', styles.hookTitle)}>Printed manga, volume by volume.</h1>
           <div className={styles.hookSide}>
-            <p className={styles.sub}>Browse the catalog, open a title, order when the cart opens.</p>
+            <p className={styles.sub}>Browse the catalog, open a title, add it to your cart.</p>
             <form role="search" className={styles.searchForm} onSubmit={onSearch}>
               <Field label="Search title or author" type="search" value={draft} onChange={(event) => setDraft(event.target.value)} />
               <div className={styles.actions}>
@@ -67,11 +77,13 @@ export default function Catalog() {
         </div>
       </section>
 
-      <div className="page">
-        <Obi as={Link} to="/flash-sale" variant="sale" className={styles.strip}>
-          Flash sales — coming soon
-        </Obi>
-      </div>
+      {sales.some((s) => s.status === 'ACTIVE') && (
+        <div className="page">
+          <Obi as={Link} to="/flash-sale" variant="sale" className={styles.strip}>
+            Flash sales — live now
+          </Obi>
+        </div>
+      )}
 
       <section id="shelf" className={cx('page', styles.shelfSection)} aria-labelledby="shelf-title">
         <h2 id="shelf-title" className={cx('condensed', styles.shelfTitle)}>
@@ -104,7 +116,7 @@ export default function Catalog() {
           </Notice>
         )}
 
-        {visible.length > 0 && <Shelf items={visible} />}
+        {visible.length > 0 && <Shelf items={visible} salePrices={activePrices(sales)} />}
       </section>
     </>
   )
