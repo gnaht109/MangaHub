@@ -5,17 +5,20 @@ import '@fontsource-variable/archivo/wdth.css'
 import './styles/tokens.css'
 import './styles/base.css'
 import { AuthProvider } from './auth/AuthContext.jsx'
+import { CartProvider } from './cart/CartContext.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import AppRoutes from './routes.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <BrowserRouter>
-        <ErrorBoundary>
-          <AppRoutes />
-        </ErrorBoundary>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
+        </BrowserRouter>
+      </CartProvider>
     </AuthProvider>
   </StrictMode>,
 )

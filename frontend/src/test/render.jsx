@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import { AuthProvider } from '../auth/AuthContext.jsx'
+import { CartProvider } from '../cart/CartContext.jsx'
 import ErrorBoundary from '../components/ErrorBoundary.jsx'
 import AppRoutes from '../routes.jsx'
 
@@ -12,12 +13,14 @@ function LocationProbe() {
 export function renderApp(route = '/') {
   return render(
     <AuthProvider>
-      <MemoryRouter initialEntries={[route]}>
-        <ErrorBoundary>
-          <AppRoutes />
-        </ErrorBoundary>
-        <LocationProbe />
-      </MemoryRouter>
+      <CartProvider>
+        <MemoryRouter initialEntries={[route]}>
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
+          <LocationProbe />
+        </MemoryRouter>
+      </CartProvider>
     </AuthProvider>,
   )
 }

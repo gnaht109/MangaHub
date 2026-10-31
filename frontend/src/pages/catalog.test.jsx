@@ -7,6 +7,7 @@ import { ApiError } from '../lib/api.js'
 import { listManga } from '../lib/manga.js'
 
 vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
+vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(async () => ({ id: 1, items: [], subTotal: 0 })), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
 
 describe('Catalog', () => {
   it('shows the hook, the flash sale strip and every volume', async () => {

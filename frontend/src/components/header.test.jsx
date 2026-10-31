@@ -6,6 +6,7 @@ import { listManga } from '../lib/manga.js'
 import { signInAs, admin, customer } from '../test/fixtures.js'
 
 vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
+vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(async () => ({ id: 1, items: [], subTotal: 0 })), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
 
 describe('Header and layout', () => {
   beforeEach(() => listManga.mockResolvedValue([]))
