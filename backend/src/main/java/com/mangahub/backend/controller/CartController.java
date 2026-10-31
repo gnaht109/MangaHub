@@ -52,14 +52,14 @@ public class CartController {
                 .build();
     }
 
-    // @PutMapping("/items/{mangaId}")
-    // public ApiResponse<CartResponse> updateQuantity(@AuthenticationPrincipal UserDetailsImpl user,
-    //                                                 @PathVariable Long mangaId,
-    //                                                 @Valid @RequestBody UpdateCartItemRequest request) {
-    //     return ApiResponse.<CartResponse>builder()
-    //             .data(cartService.updateQuantity(user.getId(), mangaId, request.getQuantity()))
-    //             .build();
-    // }
+    @PutMapping("/items/{mangaId}")
+    public ApiResponse<CartResponse> updateQuantity(@AuthenticationPrincipal UserDetailsImpl user,
+                                                    @PathVariable Long mangaId,
+                                                    @Valid @RequestBody UpdateCartItemRequest request) {
+        return ApiResponse.<CartResponse>builder()
+                .data(cartService.updateQuantity(user.getId(), mangaId, request.getQuantity()))
+                .build();
+    }
 
     @DeleteMapping("/items/{mangaId}")
     public ApiResponse<CartResponse> removeItem(@AuthenticationPrincipal UserDetailsImpl user,

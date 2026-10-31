@@ -26,6 +26,9 @@ public enum ErrorCode {
     FLASH_SALE_ALREADY_EXISTS(409, "This flash sale already exists.", HttpStatus.CONFLICT),
     FLASH_SALE_NOT_FOUND(404, "This flash sale is not found.", HttpStatus.NOT_FOUND),
 
+    // CART
+    CART_ITEM_NOT_FOUND(404, "This volume is not in your cart.", HttpStatus.NOT_FOUND),
+
     // FLASHSALEITEM
     DUPLICATE_FLASH_SALE_ITEM(409, "This item has already been added.", HttpStatus.CONFLICT),
     INVALID_DISCOUNTED_PRICE(400, "The discounted price must be lower than the base price.", HttpStatus.BAD_REQUEST),

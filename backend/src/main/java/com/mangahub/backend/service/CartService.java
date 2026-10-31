@@ -55,6 +55,19 @@ public class CartService {
         return cartMapper.toCartResponse(cart);
     }
 
+    @Transactional
+    public CartResponse updateQuantity(Long userId, Long mangaId, int quantity){
+        Cart cart = findOrCreateCart(userId);
+        CartItem item = cart.findItem(mangaId)
+                .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
+        if (quantity == 0) {
+            cart.removeItem(mangaId);
+        } else {
+            item.setQuantity(quantity);
+        }
+        return cartMapper.toCartResponse(cart);
+    }
+
     //---------------private helpers-----------------//
     private Cart findOrCreateCart(Long userId){
         return cartRepository.findByUserId(userId)
