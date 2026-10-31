@@ -3,6 +3,7 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderApp } from '../test/render.jsx'
 import { listManga } from '../lib/manga.js'
+import { getCart } from '../lib/cart.js'
 import { signInAs, admin, customer } from '../test/fixtures.js'
 
 vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
@@ -30,6 +31,29 @@ describe('Header and layout', () => {
     signInAs(admin)
     renderApp('/nowhere')
     expect(screen.getByRole('link', { name: 'Admin' }).getAttribute('href')).toBe('/admin')
+  })
+
+  it.each([
+    [[{ mangaId: 1, quantity: 2 }, { mangaId: 2, quantity: 1 }], 'Cart, 3 items'],
+    [[{ mangaId: 1, quantity: 1 }], 'Cart, 1 item'],
+  ])('labels the Cart link with the volume count', async (items, name) => {
+    getCart.mockResolvedValue({ id: 1, items, subTotal: 0 })
+    signInAs(customer)
+    renderApp('/nowhere')
+    expect(await screen.findByRole('link', { name })).toBeTruthy()
+  })
+
+  it.each([
+    ['empty', () => getCart.mockResolvedValue({ id: 1, items: [], subTotal: 0 }), true],
+    ['errored', () => getCart.mockRejectedValue(new Error('x')), true],
+    ['signed out', () => {}, false],
+  ])('shows a plain Cart link when %s', async (_, setup, signedIn) => {
+    setup()
+    if (signedIn) signInAs(customer)
+    renderApp('/nowhere')
+    await waitFor(() => expect(getCart).toHaveBeenCalledTimes(signedIn ? 1 : 0))
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.getByRole('link', { name: 'Cart' })).toBeTruthy()
   })
 
   it('submits header search to the catalog query', async () => {

@@ -18,6 +18,13 @@
   border-bottom: 3px solid transparent;
 }
 .link:hover, .active { border-bottom-color: var(--ink); }
+.count {
+  margin-left: var(--s1);
+  padding: 0 var(--s1);
+  background: var(--ink);
+  color: var(--obi);
+  font-size: 1rem;
+}
 .name {
   max-width: 20ch;
   overflow: hidden;

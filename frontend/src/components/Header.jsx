@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext.jsx'
+import { useCart } from '../cart/CartContext.jsx'
 import { cx } from '../lib/cx.js'
 import styles from './Header.module.css'
 
@@ -14,6 +15,7 @@ const linkClass = ({ isActive }) => cx('condensed', styles.link, isActive && sty
 
 export default function Header() {
   const { user, isAdmin } = useAuth()
+  const { count } = useCart()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const [query, setQuery] = useState(params.get('q') ?? '')
@@ -46,7 +48,14 @@ export default function Header() {
             <ul className={styles.nav}>
               {NAV.map((item) => (
                 <li key={item.to}>
-                  <NavLink to={item.to} end={item.end} className={linkClass} onClick={close}>{item.label}</NavLink>
+                  <NavLink to={item.to} end={item.end} className={linkClass} onClick={close}>{item.label}
+                    {item.to === '/cart' && count > 0 && (
+                      <>
+                        <span className="visually-hidden">, {count} {count === 1 ? 'item' : 'items'}</span>
+                        <span className={styles.count} aria-hidden="true">{count}</span>
+                      </>
+                    )}
+                  </NavLink>
                 </li>
               ))}
             </ul>
