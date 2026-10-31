@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 public class UpdateCartItemRequest {
     @Min(0)
-    @Max(10)
+    @Max(value = 10, message = "You can have at most 10 of one volume in your cart.")
     int quantity;
 }

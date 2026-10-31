@@ -62,6 +62,24 @@ describe('Cart page', () => {
     expect(setCartItemQuantity).toHaveBeenLastCalledWith('m1', 2)
   })
 
+  it('decreases from 12 to the 10 cap the backend allows', async () => {
+    getCart.mockResolvedValue({ id: 1, items: [item('m1', 'Đảo Hải Tặc', 12, 25000)], subTotal: 300000 })
+    setCartItemQuantity.mockResolvedValue({ id: 1, items: [item('m1', 'Đảo Hải Tặc', 10, 25000)], subTotal: 250000 })
+    renderApp('/cart')
+    await userEvent.click(await screen.findByRole('button', { name: 'Decrease quantity of Đảo Hải Tặc' }))
+    expect(setCartItemQuantity).toHaveBeenCalledWith('m1', 10)
+  })
+
+  it('keeps the same row element when the item id changes from null to a number', async () => {
+    getCart.mockResolvedValue({ id: 1, items: [{ ...item('m1', 'Đảo Hải Tặc', 2, 25000), id: null }], subTotal: 50000 })
+    setCartItemQuantity.mockResolvedValue({ id: 1, items: [{ ...item('m1', 'Đảo Hải Tặc', 3, 25000), id: 7 }], subTotal: 75000 })
+    renderApp('/cart')
+    const row = (await screen.findByRole('link', { name: 'Đảo Hải Tặc' })).closest('li')
+    await userEvent.click(screen.getByRole('button', { name: 'Increase quantity of Đảo Hải Tặc' }))
+    await vi.waitFor(() => expect(within(row).getByText('3')).toBeTruthy())
+    expect(screen.getByRole('link', { name: 'Đảo Hải Tặc' }).closest('li')).toBe(row)
+  })
+
   it('disables decrease at quantity 1', async () => {
     renderApp('/cart')
     expect((await screen.findByRole('button', { name: 'Decrease quantity of Naruto' })).disabled).toBe(true)
@@ -77,10 +95,10 @@ describe('Cart page', () => {
 
   it('shows the server message and keeps quantity 10 when the backend rejects more', async () => {
     getCart.mockResolvedValue({ id: 1, items: [item('m1', 'Đảo Hải Tặc', 10, 25000)], subTotal: 250000 })
-    setCartItemQuantity.mockRejectedValue(new ApiError(400, 'You can buy at most 10 of one item.'))
+    setCartItemQuantity.mockRejectedValue(new ApiError(400, 'You can have at most 10 of one volume in your cart.'))
     renderApp('/cart')
     await userEvent.click(await screen.findByRole('button', { name: 'Increase quantity of Đảo Hải Tặc' }))
-    expect(await screen.findByText('You can buy at most 10 of one item.')).toBeTruthy()
+    expect(await screen.findByText('You can have at most 10 of one volume in your cart.')).toBeTruthy()
     expect(setCartItemQuantity).toHaveBeenCalledWith('m1', 11)
     const row = screen.getByRole('link', { name: 'Đảo Hải Tặc' }).closest('li')
     expect(within(row).getByText('10')).toBeTruthy()

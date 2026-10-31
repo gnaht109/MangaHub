@@ -34,12 +34,12 @@ export default function Cart() {
         {changeError && <Notice tone="error" title="Couldn't update your cart.">{changeError.message}</Notice>}
         <ul className={styles.rows}>
           {cart.items.map((item) => (
-            <li key={item.id} className={styles.row}>
+            <li key={item.mangaId} className={styles.row}>
               <div className={styles.thumb} aria-hidden="true">{item.title}</div>
               <div className={styles.info}>
                 <Link to={`/manga/${item.mangaId}`} className={styles.itemTitle}>{item.title}</Link>
                 <div className={styles.stepper}>
-                  <Button variant="secondary" disabled={pending || item.quantity <= 1} onClick={() => change(setQuantity(item.mangaId, item.quantity - 1))} aria-label={`Decrease quantity of ${item.title}`}>−</Button>
+                  <Button variant="secondary" disabled={pending || item.quantity <= 1} onClick={() => change(setQuantity(item.mangaId, Math.min(item.quantity - 1, 10)))} aria-label={`Decrease quantity of ${item.title}`}>−</Button>
                   <span className={styles.qty}>{item.quantity}</span>
                   <Button variant="secondary" disabled={pending} onClick={() => change(setQuantity(item.mangaId, item.quantity + 1))} aria-label={`Increase quantity of ${item.title}`}>+</Button>
                 </div>
