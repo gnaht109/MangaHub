@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { request } from './api.js'
-import { getCart, addCartItem, removeCartItem } from './cart.js'
+import { getCart, addCartItem, removeCartItem, setCartItemQuantity } from './cart.js'
 
 vi.mock('./api.js', () => ({ request: vi.fn() }))
 
@@ -20,5 +20,10 @@ describe('cart endpoints', () => {
   it('deletes an item with an encoded id', async () => {
     await removeCartItem('a/b')
     expect(request).toHaveBeenCalledWith('/api/cart/items/a%2Fb', { method: 'DELETE' })
+  })
+
+  it('puts a quantity with an encoded id', async () => {
+    await setCartItemQuantity('a/b', 3)
+    expect(request).toHaveBeenCalledWith('/api/cart/items/a%2Fb', { method: 'PUT', body: { quantity: 3 } })
   })
 })

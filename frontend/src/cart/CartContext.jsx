@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useAuth } from '../auth/AuthContext.jsx'
-import { getCart, addCartItem, removeCartItem } from '../lib/cart.js'
+import { getCart, addCartItem, removeCartItem, setCartItemQuantity } from '../lib/cart.js'
 
 const CartContext = createContext(null)
 const SIGNED_OUT = { cart: null, status: 'idle', error: null }
@@ -57,6 +57,7 @@ export function CartProvider({ children }) {
     count: cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0,
     add: (mangaId, quantity = 1) => mutate(() => addCartItem(mangaId, quantity)),
     remove: (mangaId) => mutate(() => removeCartItem(mangaId)),
+    setQuantity: (mangaId, quantity) => mutate(() => setCartItemQuantity(mangaId, quantity)),
     refresh: () => (userId ? load(userId, () => current.current === userId, true) : Promise.resolve()),
   }
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>

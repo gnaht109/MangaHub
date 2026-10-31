@@ -3,11 +3,11 @@ import { render, screen, act, waitFor } from '@testing-library/react'
 import { AuthProvider } from '../auth/AuthContext.jsx'
 import { CartProvider, useCart } from './CartContext.jsx'
 import { ApiError } from '../lib/api.js'
-import { getCart, addCartItem, removeCartItem } from '../lib/cart.js'
+import { getCart, addCartItem, removeCartItem, setCartItemQuantity } from '../lib/cart.js'
 import { signInAs, customer, admin } from '../test/fixtures.js'
 import { clearSession } from '../lib/session.js'
 
-vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
+vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(), addCartItem: vi.fn(), removeCartItem: vi.fn(), setCartItemQuantity: vi.fn() }))
 
 const cart = {
   id: 1,
@@ -68,6 +68,30 @@ describe('CartProvider', () => {
     expect(addCartItem).toHaveBeenCalledWith(1, 5)
     expect(res).toEqual({ ok: true, error: null })
     expect(ctx.count).toBe(5)
+  })
+
+  it('setQuantity replaces the cart and resolves ok', async () => {
+    setCartItemQuantity.mockResolvedValue(bigger)
+    signInAs(customer)
+    mount()
+    await waitFor(() => expect(ctx.count).toBe(3))
+    let res
+    await act(async () => { res = await ctx.setQuantity(1, 5) })
+    expect(setCartItemQuantity).toHaveBeenCalledWith(1, 5)
+    expect(res).toEqual({ ok: true, error: null })
+    expect(ctx.count).toBe(5)
+  })
+
+  it('setQuantity failure resolves with the error and keeps the cart', async () => {
+    const err = new ApiError(400, 'Max 10')
+    setCartItemQuantity.mockRejectedValue(err)
+    signInAs(customer)
+    mount()
+    await waitFor(() => expect(ctx.count).toBe(3))
+    let res
+    await act(async () => { res = await ctx.setQuantity(1, 11) })
+    expect(res).toEqual({ ok: false, error: err })
+    expect(ctx.count).toBe(3)
   })
 
   it('add failure resolves with the error and keeps the cart', async () => {
