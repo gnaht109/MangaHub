@@ -37,6 +37,7 @@
   font-variant-numeric: tabular-nums;
 }
 .micro { font-size: var(--fs-micro); letter-spacing: 0.08em; }
+.was { display: flex; flex-wrap: wrap; gap: 0 var(--s1); font-variant-numeric: tabular-nums; }
 .ghostInfo { min-height: 320px; border-top: var(--rule); }
 .info { display: grid; align-content: start; gap: var(--s3); }
 .title {

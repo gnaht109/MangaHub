@@ -6,9 +6,16 @@ import { sampleManga, signInAs, customer } from '../test/fixtures.js'
 import { ApiError } from '../lib/api.js'
 import { getManga } from '../lib/manga.js'
 import { addCartItem } from '../lib/cart.js'
+import { listFlashSales } from '../lib/flashSale.js'
 
 vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
 vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(async () => ({ id: 1, items: [], subTotal: 0 })), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
+vi.mock('../lib/flashSale.js', () => ({ listFlashSales: vi.fn(async () => []) }))
+
+const saleFor = (mangaId, discountedPrice) => ({
+  id: 7, status: 'ACTIVE',
+  items: [{ mangaId, discountedPrice, saleQuantityLimit: 5, quantitySold: 2, flashSaleId: 7 }],
+})
 
 describe('MangaDetail', () => {
   beforeEach(() => vi.clearAllMocks())
@@ -71,5 +78,34 @@ describe('MangaDetail', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Add to cart' }))
     expect((await screen.findByRole('alert')).textContent).toContain('Out of stock')
     expect(screen.queryByText('Added to your cart.')).toBeNull()
+  })
+
+  it('shows the flash sale price with the regular price struck through', async () => {
+    getManga.mockResolvedValue(sampleManga[0])
+    listFlashSales.mockResolvedValue([saleFor('m1', 19000)])
+    renderApp('/manga/m1')
+    expect(await screen.findByText('19.000 ₫')).toBeTruthy()
+    expect(screen.getByText('Flash sale')).toBeTruthy()
+    expect(screen.getByText('25.000 ₫').closest('s')).toBeTruthy()
+    expect(screen.getByText('Regular price', { exact: false }).className).toContain('visually-hidden')
+    expect(screen.queryByText('Printed volume')).toBeNull()
+  })
+
+  it('keeps the base price when the sales request fails', async () => {
+    getManga.mockResolvedValue(sampleManga[0])
+    listFlashSales.mockRejectedValue(new Error('down'))
+    renderApp('/manga/m1')
+    expect(await screen.findByText('25.000 ₫')).toBeTruthy()
+    expect(screen.getByText('Printed volume')).toBeTruthy()
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  it('ignores sales that do not include this volume', async () => {
+    getManga.mockResolvedValue(sampleManga[1])
+    listFlashSales.mockResolvedValue([saleFor('m1', 19000)])
+    renderApp('/manga/m2')
+    expect(await screen.findByText('22.000 ₫')).toBeTruthy()
+    expect(listFlashSales).toHaveBeenCalled()
+    expect(screen.queryByText('Flash sale')).toBeNull()
   })
 })

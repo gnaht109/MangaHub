@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useCart } from '../cart/CartContext.jsx'
 import { getManga } from '../lib/manga.js'
+import { listFlashSales } from '../lib/flashSale.js'
+import { activePrices } from '../lib/sales.js'
 import { formatPrice } from '../lib/format.js'
 import { cx } from '../lib/cx.js'
 import Obi from '../components/Obi.jsx'
@@ -17,6 +19,7 @@ export default function MangaDetail() {
   const navigate = useNavigate()
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState({ status: 'loading', manga: null, error: null })
+  const [sales, setSales] = useState([])
   const [cartNote, setCartNote] = useState(null) // null | { ok: true } | { error: message }
 
   useEffect(() => {
@@ -28,6 +31,14 @@ export default function MangaDetail() {
       .catch((error) => active && setState({ status: error.status === 404 ? 'notfound' : 'error', manga: null, error }))
     return () => { active = false }
   }, [id, attempt])
+
+  useEffect(() => {
+    let active = true
+    setSales([]) // never show the previous volume's price
+    // Sales are decoration: on failure, the base price renders and no error is shown.
+    listFlashSales().then((list) => active && setSales(list ?? [])).catch(() => {})
+    return () => { active = false }
+  }, [id])
 
   async function addToCart() {
     if (!user) return navigate(`/login?next=${encodeURIComponent(`/manga/${id}`)}`)
@@ -64,16 +75,27 @@ export default function MangaDetail() {
   }
 
   const { manga } = state
+  const sale = activePrices(sales).get(String(manga.id))
   return (
     <article className={cx('page', styles.layout)}>
       <div className={styles.jacket}>
         {manga.coverImage
           ? <img src={manga.coverImage} alt="" className={styles.cover} />
           : <span className={cx('condensed', styles.proof)} aria-hidden="true">{manga.title}</span>}
-        <Obi className={styles.jacketObi}>
-          <span>{formatPrice(manga.basePrice)}</span>
-          <span className={styles.micro}>Printed volume</span>
-        </Obi>
+        {sale ? (
+          <Obi variant="sale" className={styles.jacketObi}>
+            <span>{formatPrice(sale.discountedPrice)}</span>
+            <span className={cx(styles.micro, styles.was)}>
+              Flash sale
+              <s><span className="visually-hidden">Regular price </span>{formatPrice(manga.basePrice)}</s>
+            </span>
+          </Obi>
+        ) : (
+          <Obi className={styles.jacketObi}>
+            <span>{formatPrice(manga.basePrice)}</span>
+            <span className={styles.micro}>Printed volume</span>
+          </Obi>
+        )}
       </div>
 
       <div className={styles.info}>
