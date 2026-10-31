@@ -4,7 +4,7 @@ import { AuthProvider } from '../auth/AuthContext.jsx'
 import { CartProvider, useCart } from './CartContext.jsx'
 import { ApiError } from '../lib/api.js'
 import { getCart, addCartItem, removeCartItem } from '../lib/cart.js'
-import { signInAs, customer } from '../test/fixtures.js'
+import { signInAs, customer, admin } from '../test/fixtures.js'
 import { clearSession } from '../lib/session.js'
 
 vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
@@ -20,8 +20,10 @@ const cart = {
 const bigger = { ...cart, items: [{ ...cart.items[0], quantity: 5 }], subTotal: 50 }
 
 let ctx
+let counts = []
 function Probe() {
   ctx = useCart()
+  counts.push(ctx.count)
   return <p data-testid="s">{ctx.status}:{ctx.count}</p>
 }
 const mount = () => render(<AuthProvider><CartProvider><Probe /></CartProvider></AuthProvider>)
@@ -125,6 +127,59 @@ describe('CartProvider', () => {
     mount()
     await waitFor(() => expect(ctx.status).toBe('error'))
     expect(ctx.error).toBe(err)
+    expect(ctx.count).toBe(0)
+  })
+
+  it('never shows the previous user cart to the next user', async () => {
+    signInAs(customer)
+    mount()
+    await waitFor(() => expect(ctx.count).toBe(3))
+    act(() => clearSession())
+    getCart.mockReturnValue(new Promise(() => {}))
+    counts = []
+    act(() => signInAs(admin))
+    expect(ctx.cart).toBeNull()
+    expect(ctx.count).toBe(0)
+    expect(ctx.status).toBe('loading')
+    expect(counts).not.toContain(3) // after the first sign-out render
+  })
+
+  it('drops a late mutation response from the previous user and lets the next user add', async () => {
+    signInAs(customer)
+    mount()
+    await waitFor(() => expect(ctx.count).toBe(3))
+    let release
+    addCartItem.mockReturnValueOnce(new Promise((r) => { release = r }))
+    let first
+    act(() => { first = ctx.add(1) })
+    act(() => clearSession())
+    getCart.mockResolvedValue({ id: 2, items: [], subTotal: 0 })
+    act(() => signInAs(admin))
+    await waitFor(() => expect(ctx.status).toBe('ready'))
+    await act(async () => { release(bigger); await first })
+    expect(ctx.count).toBe(0)
+    expect(ctx.pending).toBe(false)
+    addCartItem.mockResolvedValue({ ...cart, id: 2 })
+    let res
+    await act(async () => { res = await ctx.add(2) })
+    expect(res.ok).toBe(true)
+    expect(addCartItem).toHaveBeenCalledTimes(2)
+    expect(ctx.count).toBe(3)
+  })
+
+  it('drops a stale refresh after a user switch', async () => {
+    signInAs(customer)
+    mount()
+    await waitFor(() => expect(ctx.count).toBe(3))
+    let release
+    getCart.mockReturnValueOnce(new Promise((r) => { release = r }))
+    let p
+    act(() => { p = ctx.refresh() })
+    act(() => clearSession())
+    getCart.mockResolvedValue({ id: 2, items: [], subTotal: 0 })
+    act(() => signInAs(admin))
+    await waitFor(() => expect(ctx.status).toBe('ready'))
+    await act(async () => { release(cart); await p })
     expect(ctx.count).toBe(0)
   })
 
