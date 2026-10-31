@@ -22,7 +22,37 @@
 .summary h2 { font-size: var(--fs-h2); }
 .totals { display: flex; justify-content: space-between; border-top: var(--rule-thin); padding-top: var(--s2); }
 
+.skeleton { min-height: 240px; border-top: var(--rule); background: var(--jacket); }
+.rows { display: grid; list-style: none; margin: 0; padding: 0; border-top: var(--rule); }
+.row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: var(--s3);
+  align-items: center;
+  padding: var(--s2) 0;
+  border-bottom: var(--rule-thin);
+}
+.thumb {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  padding: var(--s1);
+  background: var(--jacket);
+  color: var(--jacket-ink);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.info { display: grid; gap: 4px; min-width: 0; }
+.itemTitle { color: var(--ink); font-size: var(--fs-h3); font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.meta { color: var(--ink-soft); font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
+.lineEnd { display: grid; justify-items: end; gap: var(--s1); }
+.lineTotal { font-size: var(--fs-h3); font-weight: 600; font-variant-numeric: tabular-nums; }
+.totals dd { font-variant-numeric: tabular-nums; }
+
 @media (max-width: 767px) {
   .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cart { grid-template-columns: 1fr; }
+  .row { grid-template-columns: 48px minmax(0, 1fr); gap: var(--s2); }
+  .lineEnd { grid-column: 2; grid-auto-flow: column; justify-content: space-between; align-items: center; justify-items: start; }
 }

@@ -24,7 +24,7 @@ export default function AppRoutes() {
         <Route path="admin" element={<RequireAuth role="ADMIN"><AdminTitles /></RequireAuth>} />
         <Route path="admin/titles/new" element={<RequireAuth role="ADMIN"><AdminNewTitle /></RequireAuth>} />
         <Route path="flash-sale" element={<FlashSale />} />
-        <Route path="cart" element={<Cart />} />
+        <Route path="cart" element={<RequireAuth><Cart /></RequireAuth>} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
