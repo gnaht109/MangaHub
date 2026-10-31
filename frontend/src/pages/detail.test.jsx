@@ -5,6 +5,7 @@ import { renderApp } from '../test/render.jsx'
 import { sampleManga, signInAs, customer } from '../test/fixtures.js'
 import { ApiError } from '../lib/api.js'
 import { getManga } from '../lib/manga.js'
+import { addCartItem } from '../lib/cart.js'
 
 vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
 vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(async () => ({ id: 1, items: [], subTotal: 0 })), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
@@ -41,12 +42,34 @@ describe('MangaDetail', () => {
     expect(screen.getByTestId('location').textContent).toBe('/login?next=%2Fmanga%2Fm1')
   })
 
-  it('tells signed-in users the cart is coming', async () => {
+  it('adds to the cart for signed-in users', async () => {
     signInAs(customer)
     getManga.mockResolvedValue(sampleManga[0])
+    addCartItem.mockResolvedValue({ id: 1, items: [], subTotal: 0 })
     renderApp('/manga/m1')
     await userEvent.click(await screen.findByRole('button', { name: 'Add to cart' }))
-    expect(screen.getByText("Cart opens soon. This volume isn't saved yet.")).toBeTruthy()
+    expect(addCartItem).toHaveBeenCalledWith('m1', 1)
+    expect(await screen.findByText('Added to your cart.')).toBeTruthy()
     expect(screen.getByRole('link', { name: 'View cart' }).getAttribute('href')).toBe('/cart')
+  })
+
+  it('disables Add to cart while the add is pending', async () => {
+    signInAs(customer)
+    getManga.mockResolvedValue(sampleManga[0])
+    addCartItem.mockReturnValue(new Promise(() => {}))
+    renderApp('/manga/m1')
+    const button = await screen.findByRole('button', { name: 'Add to cart' })
+    await userEvent.click(button)
+    expect(button.disabled).toBe(true)
+  })
+
+  it('shows the server message when the add fails', async () => {
+    signInAs(customer)
+    getManga.mockResolvedValue(sampleManga[0])
+    addCartItem.mockRejectedValue(new ApiError(409, 'Out of stock', 409))
+    renderApp('/manga/m1')
+    await userEvent.click(await screen.findByRole('button', { name: 'Add to cart' }))
+    expect((await screen.findByRole('alert')).textContent).toContain('Out of stock')
+    expect(screen.queryByText('Added to your cart.')).toBeNull()
   })
 })

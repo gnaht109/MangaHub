@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext.jsx'
+import { useCart } from '../cart/CartContext.jsx'
 import { getManga } from '../lib/manga.js'
 import { formatPrice } from '../lib/format.js'
 import { cx } from '../lib/cx.js'
@@ -12,24 +13,27 @@ import styles from './MangaDetail.module.css'
 export default function MangaDetail() {
   const { id } = useParams()
   const { user } = useAuth()
+  const { add, pending } = useCart()
   const navigate = useNavigate()
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState({ status: 'loading', manga: null, error: null })
-  const [cartNote, setCartNote] = useState(false)
+  const [cartNote, setCartNote] = useState(null) // null | { ok: true } | { error: message }
 
   useEffect(() => {
     let active = true
     setState({ status: 'loading', manga: null, error: null })
-    setCartNote(false)
+    setCartNote(null)
     getManga(id)
       .then((manga) => active && setState({ status: 'ready', manga, error: null }))
       .catch((error) => active && setState({ status: error.status === 404 ? 'notfound' : 'error', manga: null, error }))
     return () => { active = false }
   }, [id, attempt])
 
-  function addToCart() {
-    if (!user) navigate(`/login?next=${encodeURIComponent(`/manga/${id}`)}`)
-    else setCartNote(true)
+  async function addToCart() {
+    if (!user) return navigate(`/login?next=${encodeURIComponent(`/manga/${id}`)}`)
+    const { ok, error } = await add(id, 1)
+    if (ok) setCartNote({ ok: true })
+    else if (error) setCartNote({ error: error.message })
   }
 
   if (state.status === 'loading') {
@@ -79,12 +83,13 @@ export default function MangaDetail() {
           {manga.description || 'No description yet.'}
         </p>
         <div className={styles.actions}>
-          <Button onClick={addToCart}>Add to cart</Button>
+          <Button onClick={addToCart} disabled={pending}>Add to cart</Button>
           <Button to="/" variant="secondary">Back to catalog</Button>
         </div>
-        {cartNote && (
-          <Notice title="Cart opens soon. This volume isn't saved yet." action={<Button to="/cart" variant="quiet">View cart</Button>} />
+        {cartNote?.ok && (
+          <Notice title="Added to your cart." action={<Button to="/cart" variant="quiet">View cart</Button>} />
         )}
+        {cartNote?.error && <Notice tone="error" title="Couldn't add to your cart">{cartNote.error}</Notice>}
       </div>
     </article>
   )
