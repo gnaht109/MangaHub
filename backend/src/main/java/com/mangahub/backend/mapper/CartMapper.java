@@ -29,15 +29,20 @@ public interface CartMapper {
     }
 
     @Mapping(target = "mangaId", source = "manga.id")
+    @Mapping(target = "flashSaleItemId", source = "flashSaleItem.id")
     @Mapping(target = "title", source = "manga.title")
-    @Mapping(target = "unitPrice", source = "manga.basePrice")
+    @Mapping(target = "unitPrice", ignore = true)
     @Mapping(target = "lineTotal", ignore = true)
     CartItemResponse toCartItemResponse(CartItem cartItem);
 
     @AfterMapping
     default void fillLineTotal(@MappingTarget CartItemResponse cartItemResponse, CartItem cartItem){
+        BigDecimal unitPrice = cartItem.getFlashSaleItem() == null
+            ? cartItem.getManga().getBasePrice()
+            : cartItem.getFlashSaleItem().getDiscountedPrice();
+        cartItemResponse.setUnitPrice(unitPrice);
         cartItemResponse.setLineTotal(
-            cartItemResponse.getUnitPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()))
+            unitPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()))
         );
     }
 

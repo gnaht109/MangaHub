@@ -25,7 +25,6 @@ import com.mangahub.backend.dto.response.CartResponse;
 
 import com.mangahub.backend.dto.request.AddCartItemRequest;
 import com.mangahub.backend.dto.request.UpdateCartItemRequest;
-import lombok.AccessLevel;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -52,20 +51,20 @@ public class CartController {
                 .build();
     }
 
-    @PutMapping("/items/{mangaId}")
+    @PutMapping("/items/{cartItemId}")
     public ApiResponse<CartResponse> updateQuantity(@AuthenticationPrincipal UserDetailsImpl user,
-                                                    @PathVariable Long mangaId,
+                                                    @PathVariable Long cartItemId,
                                                     @Valid @RequestBody UpdateCartItemRequest request) {
         return ApiResponse.<CartResponse>builder()
-                .data(cartService.updateQuantity(user.getId(), mangaId, request.getQuantity()))
+                .data(cartService.updateQuantity(user.getId(), cartItemId, request.getQuantity()))
                 .build();
     }
 
-    @DeleteMapping("/items/{mangaId}")
+    @DeleteMapping("/items/{cartItemId}")
     public ApiResponse<CartResponse> removeItem(@AuthenticationPrincipal UserDetailsImpl user,
-                                                @PathVariable Long mangaId) {
+                                                @PathVariable Long cartItemId) {
         return ApiResponse.<CartResponse>builder()
-                .data(cartService.removeItem(user.getId(), mangaId))
+                .data(cartService.removeItem(user.getId(), cartItemId))
                 .build();
     }
 }

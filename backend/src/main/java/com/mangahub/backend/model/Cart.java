@@ -1,7 +1,9 @@
 package com.mangahub.backend.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.mangahub.backend.enums.CartStatus;
@@ -15,7 +17,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -50,25 +51,39 @@ public class Cart {
     List<CartItem> items = new ArrayList<>();
 
     // ------------------Helper methods------------------//
-        public void addOrIncreaseItem(Manga manga, int quantity) {
-        findItem(manga.getId()).ifPresentOrElse(
+        public void addOrIncreaseItem(Manga manga, FlashSaleItem flashSaleItem, int quantity, LocalDateTime reservedUntil) {
+        findItem(manga.getId(), flashSaleItem).ifPresentOrElse(
             existing -> existing.setQuantity(existing.getQuantity() + quantity),
             () -> {
                 CartItem item = new CartItem();
                 item.setCart(this);
                 item.setManga(manga);
+                item.setFlashSaleItem(flashSaleItem);
                 item.setQuantity(quantity);
+                item.setReservedUntil(reservedUntil);
                 items.add(item);
             });
     }
 
-    public Optional<CartItem> findItem(Long mangaId) {
+    public Optional<CartItem> findItem(Long mangaId, FlashSaleItem flashSaleItem) {
+        Long targetFlashItemId = (flashSaleItem == null) ? null : flashSaleItem.getId();
+        
         return items.stream()
             .filter(i -> i.getManga().getId().equals(mangaId))
+            .filter(i -> {
+                Long cartFlashItemId = (i.getFlashSaleItem() == null) ? null : i.getFlashSaleItem().getId();
+                return Objects.equals(cartFlashItemId, targetFlashItemId);
+            })
             .findFirst();
     }
 
-    public boolean removeItem(Long mangaId){
-        return items.removeIf(i -> i.getManga().getId().equals(mangaId));
+    public Optional<CartItem> findItemById(Long cartItemId) {        
+        return items.stream()
+            .filter(i -> Objects.equals(i.getId(), cartItemId))
+            .findFirst();
+    }
+
+    public boolean removeItemById(Long cartItemId){
+        return items.removeIf(i -> Objects.equals(i.getId(), cartItemId));
     }
 }

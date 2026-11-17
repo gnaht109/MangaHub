@@ -17,4 +17,6 @@ public class AddCartItemRequest {
     @Min(1)
     @Max(10)
     int quantity;
+
+    Long flashSaleItemId;
 }
