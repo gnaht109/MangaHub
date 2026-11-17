@@ -6,4 +6,6 @@ import com.mangahub.backend.model.Manga;
 
 public interface MangaRepository extends JpaRepository<Manga, Long> {
     boolean existsByTitle(String title);
+
+    
 }

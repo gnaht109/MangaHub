@@ -3,6 +3,7 @@ package com.mangahub.backend.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,4 +51,11 @@ public class MangaController {
                 .data(createdManga)
                 .build();
     }
-}
+
+    @DeleteMapping("/{id}")
+    ApiResponse<Void> deleteManga(@PathVariable Long id) {
+        mangaService.deleteManga(id);
+        return ApiResponse.<Void>builder()
+                .message("Manga deleted successfully.")
+                .build();
+    }}

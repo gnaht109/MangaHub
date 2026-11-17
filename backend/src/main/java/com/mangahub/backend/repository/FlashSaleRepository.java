@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.mangahub.backend.model.FlashSale;
-import java.util.Optional;
 import java.util.List;
 import java.time.LocalDate;
 

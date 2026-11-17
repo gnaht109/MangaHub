@@ -11,6 +11,8 @@ import com.mangahub.backend.exception.ErrorCode;
 import com.mangahub.backend.mapper.GenreMapper;
 import com.mangahub.backend.model.Genre;
 import com.mangahub.backend.repository.GenreRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +29,7 @@ public class GenreService {
         return genreMapper.toGenreResponses(genreRepository.findAllByOrderByNameAsc());
     }
 
+    @Transactional 
     public GenreResponse createGenre(GenreCreateRequest request) {
         request.setName(request.getName().trim());
 
