@@ -44,5 +44,9 @@ public class Manga {
     // a FlashSaleItem gives it during a specific event.
     @Column(name = "price", precision = 10, scale = 2, nullable = false)
     BigDecimal basePrice;
+
+    @Column(name = "quantity", nullable = false)
+    @Builder.Default
+    Integer stockQuantity = 0;
 }
 

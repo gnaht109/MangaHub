@@ -20,4 +20,5 @@ public class FlashSaleItemResponse {
     BigDecimal discountedPrice;
     Integer saleQuantityLimit;
     Integer quantitySold;
+    Integer availableStock;
 }

@@ -1,6 +1,7 @@
 package com.mangahub.backend.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import com.mangahub.backend.model.FlashSale;
 import com.mangahub.backend.model.FlashSaleItem;
 import com.mangahub.backend.model.Manga;
 import com.mangahub.backend.model.User;
+import com.mangahub.backend.repository.CartItemRepository;
 import com.mangahub.backend.repository.FlashSaleRepository;
 import com.mangahub.backend.repository.MangaRepository;
 import com.mangahub.backend.repository.UserRepository;
@@ -40,16 +42,43 @@ public class FlashSaleService {
     FlashSaleRepository flashSaleRepository;
     FlashSaleMapper mapper;
     MangaRepository mangaRepository;
+    CartItemRepository cartItemRepository;
 
     public List<FlashSaleResponse> getAll() {
+
+        List<FlashSale> flashSales = flashSaleRepository.findAllByOrderByStartDateDesc();
+        List<Long> itemIds = flashSales.stream()
+                        .flatMap(flashsale -> flashsale.getItems().stream())
+                        .map(flashsaleitem -> flashsaleitem.getId())
+                        .toList();
+        Map<Long, Integer> reservedMap = cartItemRepository.findReservedFlashSaleStockByIds(itemIds, LocalDateTime.now())
+                        .stream()
+                        .collect(Collectors.toMap(
+                            rc -> rc.getFlashSaleItemId(),
+                            rc -> rc.getCount()
+                        ));
+
         return mapper.toFlashSaleResponses(
-            flashSaleRepository.findAllByOrderByStartDateDesc()
+            flashSales, reservedMap
         );
     }
 
     public List<FlashSaleResponse> getActive() {
+
+        List<FlashSale> activeFlashSales = flashSaleRepository.findActiveOn(LocalDate.now());
+        List<Long> itemIds = activeFlashSales.stream()
+                        .flatMap(flashsale -> flashsale.getItems().stream())
+                        .map(flashsaleitem -> flashsaleitem.getId())
+                        .toList();
+        Map<Long, Integer> reservedMap = cartItemRepository.findReservedFlashSaleStockByIds(itemIds, LocalDateTime.now())
+                        .stream()
+                        .collect(Collectors.toMap(
+                            rc -> rc.getFlashSaleItemId(),
+                            rc -> rc.getCount()
+                        ));
+
         return mapper.toFlashSaleResponses(
-            flashSaleRepository.findActiveOn(LocalDate.now())
+            activeFlashSales, reservedMap
         );
     }
 
@@ -93,7 +122,7 @@ public class FlashSaleService {
         addItems(flashSale, request.getItems());
         flashSaleRepository.save(flashSale);
 
-        FlashSaleResponse response = mapper.toFlashSaleResponse(flashSale);
+        FlashSaleResponse response = mapper.toFlashSaleResponse(flashSale, Map.of());
         response.setStatus(flashSale.getStatus());
         return response;
     }
