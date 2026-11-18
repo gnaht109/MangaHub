@@ -1,7 +1,7 @@
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const DAY_MS = 86400000
 
-const remainingOf = (item) => Math.max(0, item.saleQuantityLimit - item.quantitySold)
+const remainingOf = (item) => Math.max(0, item.availableStock)
 
 // Local-date parse; new Date('YYYY-MM-DD') would be UTC.
 const parseDay = (s) => {
@@ -38,7 +38,7 @@ export function activePrices(sales) {
       const key = String(i.mangaId)
       const discountedPrice = Number(i.discountedPrice)
       if (!prices.has(key) || discountedPrice < prices.get(key).discountedPrice) {
-        prices.set(key, { discountedPrice, flashSaleId: i.flashSaleId })
+        prices.set(key, { discountedPrice, flashSaleId: i.flashSaleId, flashSaleItemId: i.id, availableStock: remainingOf(i) })
       }
     }
   }

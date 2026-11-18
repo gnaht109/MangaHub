@@ -18,4 +18,15 @@ describe('validate', () => {
     expect(validateTitle({ title: 'T', author: 'A', basePrice: '-1' }).basePrice).toBe('Enter a whole number of đồng, e.g. 45000')
     expect(validateTitle({ title: 'T', author: 'A', basePrice: ' 45000 ' })).toEqual({})
   })
+
+  it('accepts empty or whole-number stock and rejects the rest', () => {
+    const base = { title: 'T', author: 'A', basePrice: '1' }
+    expect(validateTitle({ ...base })).toEqual({})
+    expect(validateTitle({ ...base, stockQuantity: '' })).toEqual({})
+    expect(validateTitle({ ...base, stockQuantity: ' 20 ' })).toEqual({})
+    expect(validateTitle({ ...base, stockQuantity: '0' })).toEqual({})
+    for (const bad of ['-1', '1.5', 'abc']) {
+      expect(validateTitle({ ...base, stockQuantity: bad }).stockQuantity).toBe('Enter a whole number, e.g. 20')
+    }
+  })
 })

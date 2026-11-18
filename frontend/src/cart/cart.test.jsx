@@ -65,9 +65,17 @@ describe('CartProvider', () => {
     await waitFor(() => expect(ctx.count).toBe(3))
     let res
     await act(async () => { res = await ctx.add(1, 5) })
-    expect(addCartItem).toHaveBeenCalledWith(1, 5)
+    expect(addCartItem).toHaveBeenCalledWith(1, 5, undefined)
     expect(res).toEqual({ ok: true, error: null })
     expect(ctx.count).toBe(5)
+  })
+
+  it('add passes the flash sale item id', async () => {
+    signInAs(customer)
+    mount()
+    await waitFor(() => expect(ctx.count).toBe(3))
+    await act(async () => { await ctx.add(1, 5, 11) })
+    expect(addCartItem).toHaveBeenCalledWith(1, 5, 11)
   })
 
   it('setQuantity replaces the cart and resolves ok', async () => {

@@ -72,6 +72,40 @@ describe('Admin', () => {
     expect(screen.getByLabelText('Title').value).toBe('')
   })
 
+  async function fillTitle(stock) {
+    signInAs(admin)
+    renderApp('/admin/titles/new')
+    await userEvent.type(screen.getByLabelText('Title'), 'Monster')
+    await userEvent.type(screen.getByLabelText('Author'), 'Naoki Urasawa')
+    await userEvent.type(screen.getByLabelText('Base price (VND)'), '45000')
+    await userEvent.type(screen.getByLabelText('Stock quantity'), stock)
+    await userEvent.click(screen.getByRole('button', { name: 'Add title' }))
+  }
+
+  it('sends stock when given, trimming spaces', async () => {
+    createManga.mockResolvedValue({ id: 'm9', title: 'Monster' })
+    await fillTitle(' 20 ')
+    expect(createManga).toHaveBeenCalledWith({ title: 'Monster', author: 'Naoki Urasawa', description: null, basePrice: 45000, stockQuantity: 20 })
+  })
+
+  it('sends stock 0 instead of dropping it', async () => {
+    createManga.mockResolvedValue({ id: 'm9', title: 'Monster' })
+    await fillTitle('0')
+    expect(createManga).toHaveBeenCalledWith({ title: 'Monster', author: 'Naoki Urasawa', description: null, basePrice: 45000, stockQuantity: 0 })
+  })
+
+  it('rejects invalid stock without submitting', async () => {
+    await fillTitle('1.5')
+    expect(screen.getByText('Enter a whole number, e.g. 20')).toBeTruthy()
+    expect(createManga).not.toHaveBeenCalled()
+  })
+
+  it('explains what an empty stock means', () => {
+    signInAs(admin)
+    renderApp('/admin/titles/new')
+    expect(screen.getByText("Leave empty for 0 (customers can't buy it yet).")).toBeTruthy()
+  })
+
   it('shows a server error', async () => {
     createManga.mockRejectedValue(new ApiError(403, 'Forbidden Access', 403))
     signInAs(admin)

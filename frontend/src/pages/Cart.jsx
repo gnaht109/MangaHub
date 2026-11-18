@@ -34,20 +34,20 @@ export default function Cart() {
         {changeError && <Notice tone="error" title="Couldn't update your cart.">{changeError.message}</Notice>}
         <ul className={styles.rows}>
           {cart.items.map((item) => (
-            <li key={item.mangaId} className={styles.row}>
+            <li key={item.id} className={styles.row}>
               <div className={styles.thumb} aria-hidden="true">{item.title}</div>
               <div className={styles.info}>
                 <Link to={`/manga/${item.mangaId}`} className={styles.itemTitle}>{item.title}</Link>
                 <div className={styles.stepper}>
-                  <Button variant="secondary" disabled={pending || item.quantity <= 1} onClick={() => change(setQuantity(item.mangaId, Math.min(item.quantity - 1, 10)))} aria-label={`Decrease quantity of ${item.title}`}>−</Button>
+                  <Button variant="secondary" disabled={pending || item.quantity <= 1} onClick={() => change(setQuantity(item.id, Math.min(item.quantity - 1, 10)))} aria-label={`Decrease quantity of ${item.title}`}>−</Button>
                   <span className={styles.qty}>{item.quantity}</span>
-                  <Button variant="secondary" disabled={pending} onClick={() => change(setQuantity(item.mangaId, item.quantity + 1))} aria-label={`Increase quantity of ${item.title}`}>+</Button>
+                  <Button variant="secondary" disabled={pending} onClick={() => change(setQuantity(item.id, item.quantity + 1))} aria-label={`Increase quantity of ${item.title}`}>+</Button>
                 </div>
                 <span className={styles.meta}>{formatPrice(item.unitPrice)} each</span>
               </div>
               <div className={styles.lineEnd}>
                 <span className={styles.lineTotal}>{formatPrice(item.lineTotal)}</span>
-                <Button variant="quiet" disabled={pending} onClick={() => change(remove(item.mangaId))} aria-label={`Remove ${item.title}`}>Remove</Button>
+                <Button variant="quiet" disabled={pending} onClick={() => change(remove(item.id))} aria-label={`Remove ${item.title}`}>Remove</Button>
               </div>
             </li>
           ))}

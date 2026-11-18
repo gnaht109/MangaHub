@@ -7,7 +7,7 @@ import Button from '../components/Button.jsx'
 import Notice from '../components/Notice.jsx'
 import styles from './Admin.module.css'
 
-const EMPTY = { title: '', author: '', description: '', basePrice: '' }
+const EMPTY = { title: '', author: '', description: '', basePrice: '', stockQuantity: '' }
 
 export default function AdminNewTitle() {
   const [values, setValues] = useState(EMPTY)
@@ -27,12 +27,14 @@ export default function AdminNewTitle() {
     setPending(true)
     setServerError(null)
     setCreated(null)
+    const stock = values.stockQuantity.trim()
     try {
       const manga = await createManga({
         title: values.title.trim(),
         author: values.author.trim(),
         description: values.description.trim() || null,
         basePrice: Number(values.basePrice.trim()),
+        ...(stock && { stockQuantity: Number(stock) }),
       })
       setCreated(manga)
       setValues(EMPTY)
@@ -61,6 +63,8 @@ export default function AdminNewTitle() {
           <Field label="Author" value={values.author} onChange={set('author')} error={errors.author} />
           <Field label="Description" multiline value={values.description} onChange={set('description')} />
           <Field label="Base price (VND)" inputMode="numeric" value={values.basePrice} onChange={set('basePrice')} error={errors.basePrice} />
+          <Field label="Stock quantity" inputMode="numeric" value={values.stockQuantity} onChange={set('stockQuantity')} error={errors.stockQuantity} />
+          <p className={styles.hint}>Leave empty for 0 (customers can't buy it yet).</p>
           <div className={styles.toolbar}>
             <Button type="submit" disabled={pending}>{pending ? 'Adding…' : 'Add title'}</Button>
             <Button to="/admin" variant="secondary">Cancel</Button>

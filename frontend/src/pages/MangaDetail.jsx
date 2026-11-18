@@ -42,7 +42,8 @@ export default function MangaDetail() {
 
   async function addToCart() {
     if (!user) return navigate(`/login?next=${encodeURIComponent(`/manga/${id}`)}`)
-    const { ok, error } = await add(id, 1)
+    const flashSaleItemId = activePrices(sales).get(String(state.manga.id))?.flashSaleItemId
+    const { ok, error } = await add(id, 1, flashSaleItemId)
     if (ok) setCartNote({ ok: true })
     else if (error) setCartNote({ error: error.message })
   }
@@ -76,6 +77,8 @@ export default function MangaDetail() {
 
   const { manga } = state
   const sale = activePrices(sales).get(String(manga.id))
+  const stock = sale ? sale.availableStock : manga.availableStock
+  const out = stock === 0
   return (
     <article className={cx('page', styles.layout)}>
       <div className={styles.jacket}>
@@ -105,9 +108,10 @@ export default function MangaDetail() {
           {manga.description || 'No description yet.'}
         </p>
         <div className={styles.actions}>
-          <Button onClick={addToCart} disabled={pending}>Add to cart</Button>
+          <Button onClick={addToCart} disabled={pending || out}>{out ? 'Out of stock' : 'Add to cart'}</Button>
           <Button to="/" variant="secondary">Back to catalog</Button>
         </div>
+        {stock > 0 && stock <= 5 && <p className={styles.stock}>Only {stock} left</p>}
         {cartNote?.ok && (
           <Notice title="Added to your cart." action={<Button to="/cart" variant="quiet">View cart</Button>} />
         )}

@@ -8,7 +8,7 @@ import { getCart, removeCartItem, setCartItemQuantity } from '../lib/cart.js'
 
 vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(), addCartItem: vi.fn(), removeCartItem: vi.fn(), setCartItemQuantity: vi.fn() }))
 
-const item = (mangaId, title, quantity, unitPrice) => ({ id: mangaId, mangaId, title, quantity, unitPrice, lineTotal: quantity * unitPrice })
+const item = (mangaId, title, quantity, unitPrice) => ({ id: `c-${mangaId}`, mangaId, title, quantity, unitPrice, lineTotal: quantity * unitPrice })
 const full = {
   id: 1,
   items: [item('m1', 'Đảo Hải Tặc', 2, 25000), item('m2', 'Naruto', 1, 22000)],
@@ -38,7 +38,7 @@ describe('Cart page', () => {
     removeCartItem.mockResolvedValue({ id: 1, items: [full.items[1]], subTotal: 22000 })
     renderApp('/cart')
     await userEvent.click(await screen.findByRole('button', { name: 'Remove Đảo Hải Tặc' }))
-    expect(removeCartItem).toHaveBeenCalledWith('m1')
+    expect(removeCartItem).toHaveBeenCalledWith('c-m1')
     await vi.waitFor(() => expect(screen.queryByRole('link', { name: 'Đảo Hải Tặc' })).toBeNull())
     expect(screen.getByRole('link', { name: 'Naruto' })).toBeTruthy()
   })
@@ -55,11 +55,11 @@ describe('Cart page', () => {
     setCartItemQuantity.mockResolvedValue({ ...full, items: [item('m1', 'Đảo Hải Tặc', 3, 25000), full.items[1]] })
     renderApp('/cart')
     await userEvent.click(await screen.findByRole('button', { name: 'Increase quantity of Đảo Hải Tặc' }))
-    expect(setCartItemQuantity).toHaveBeenCalledWith('m1', 3)
+    expect(setCartItemQuantity).toHaveBeenCalledWith('c-m1', 3)
     const row = screen.getByRole('link', { name: 'Đảo Hải Tặc' }).closest('li')
     await vi.waitFor(() => expect(within(row).getByText('3')).toBeTruthy())
     await userEvent.click(screen.getByRole('button', { name: 'Decrease quantity of Đảo Hải Tặc' }))
-    expect(setCartItemQuantity).toHaveBeenLastCalledWith('m1', 2)
+    expect(setCartItemQuantity).toHaveBeenLastCalledWith('c-m1', 2)
   })
 
   it('decreases from 12 to the 10 cap the backend allows', async () => {
@@ -67,17 +67,7 @@ describe('Cart page', () => {
     setCartItemQuantity.mockResolvedValue({ id: 1, items: [item('m1', 'Đảo Hải Tặc', 10, 25000)], subTotal: 250000 })
     renderApp('/cart')
     await userEvent.click(await screen.findByRole('button', { name: 'Decrease quantity of Đảo Hải Tặc' }))
-    expect(setCartItemQuantity).toHaveBeenCalledWith('m1', 10)
-  })
-
-  it('keeps the same row element when the item id changes from null to a number', async () => {
-    getCart.mockResolvedValue({ id: 1, items: [{ ...item('m1', 'Đảo Hải Tặc', 2, 25000), id: null }], subTotal: 50000 })
-    setCartItemQuantity.mockResolvedValue({ id: 1, items: [{ ...item('m1', 'Đảo Hải Tặc', 3, 25000), id: 7 }], subTotal: 75000 })
-    renderApp('/cart')
-    const row = (await screen.findByRole('link', { name: 'Đảo Hải Tặc' })).closest('li')
-    await userEvent.click(screen.getByRole('button', { name: 'Increase quantity of Đảo Hải Tặc' }))
-    await vi.waitFor(() => expect(within(row).getByText('3')).toBeTruthy())
-    expect(screen.getByRole('link', { name: 'Đảo Hải Tặc' }).closest('li')).toBe(row)
+    expect(setCartItemQuantity).toHaveBeenCalledWith('c-m1', 10)
   })
 
   it('disables decrease at quantity 1', async () => {
@@ -99,7 +89,7 @@ describe('Cart page', () => {
     renderApp('/cart')
     await userEvent.click(await screen.findByRole('button', { name: 'Increase quantity of Đảo Hải Tặc' }))
     expect(await screen.findByText('You can have at most 10 of one volume in your cart.')).toBeTruthy()
-    expect(setCartItemQuantity).toHaveBeenCalledWith('m1', 11)
+    expect(setCartItemQuantity).toHaveBeenCalledWith('c-m1', 11)
     const row = screen.getByRole('link', { name: 'Đảo Hải Tặc' }).closest('li')
     expect(within(row).getByText('10')).toBeTruthy()
   })

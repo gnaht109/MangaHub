@@ -17,6 +17,11 @@ describe('cart endpoints', () => {
     expect(request).toHaveBeenCalledWith('/api/cart/items', { method: 'POST', body: { mangaId: 7, quantity: 2 } })
   })
 
+  it('posts a flash-sale item with its sale item id', async () => {
+    await addCartItem(7, 2, 11)
+    expect(request).toHaveBeenCalledWith('/api/cart/items', { method: 'POST', body: { mangaId: 7, quantity: 2, flashSaleItemId: 11 } })
+  })
+
   it('deletes an item with an encoded id', async () => {
     await removeCartItem('a/b')
     expect(request).toHaveBeenCalledWith('/api/cart/items/a%2Fb', { method: 'DELETE' })

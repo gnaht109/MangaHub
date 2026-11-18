@@ -7,7 +7,7 @@ import { ApiError } from '../lib/api.js'
 import { listManga } from '../lib/manga.js'
 import { listFlashSales } from '../lib/flashSale.js'
 
-const item = (mangaId, discountedPrice, limit = 10, sold = 0) => ({ id: mangaId, flashSaleId: 1, mangaId, discountedPrice, saleQuantityLimit: limit, quantitySold: sold })
+const item = (mangaId, discountedPrice, availableStock = 10) => ({ id: mangaId, flashSaleId: 1, mangaId, discountedPrice, saleQuantityLimit: 10, quantitySold: 0, availableStock })
 const sale = (over) => ({ id: 1, name: 'Autumn drop', status: 'ACTIVE', startDate: '2026-10-30', endDate: '2026-11-03', items: [], ...over })
 
 vi.mock('../lib/flashSale.js', () => ({ listFlashSales: vi.fn(async () => []) }))
@@ -27,7 +27,7 @@ describe('Catalog', () => {
 
   it('shows the sale price, struck base price and a strip for an active sale', async () => {
     listManga.mockResolvedValue(sampleManga)
-    listFlashSales.mockResolvedValue([sale({ items: [item('m1', 15000), item('m2', 12000, 5, 5)] })])
+    listFlashSales.mockResolvedValue([sale({ items: [item('m1', 15000), item('m2', 12000, 0)] })])
     renderApp('/')
     const strip = await screen.findByRole('link', { name: /flash sales — live now/i })
     expect(strip.getAttribute('href')).toBe('/flash-sale')
@@ -43,7 +43,7 @@ describe('Catalog', () => {
 
   it('keeps the strip for an active sale whose items are all sold out', async () => {
     listManga.mockResolvedValue(sampleManga)
-    listFlashSales.mockResolvedValue([sale({ items: [item('m1', 15000, 5, 5)] })])
+    listFlashSales.mockResolvedValue([sale({ items: [item('m1', 15000, 0)] })])
     renderApp('/')
     expect(await screen.findByRole('link', { name: /flash sales — live now/i })).toBeTruthy()
   })
