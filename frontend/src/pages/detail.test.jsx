@@ -14,7 +14,7 @@ vi.mock('../lib/flashSale.js', () => ({ listFlashSales: vi.fn(async () => []) })
 
 const saleFor = (mangaId, discountedPrice) => ({
   id: 7, status: 'ACTIVE',
-  items: [{ mangaId, discountedPrice, saleQuantityLimit: 5, quantitySold: 2, flashSaleId: 7 }],
+  items: [{ id: 11, mangaId, discountedPrice, saleQuantityLimit: 5, quantitySold: 2, availableStock: 3, flashSaleId: 7 }],
 })
 
 describe('MangaDetail', () => {

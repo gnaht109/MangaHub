@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { joinSales, activePrices, saleDaysLabel, formatDateRange } from './sales.js'
 
-const item = (o) => ({ id: 1, mangaId: 1, flashSaleId: 1, discountedPrice: 10000, saleQuantityLimit: 5, quantitySold: 0, ...o })
+const item = (o) => ({ id: 1, mangaId: 1, flashSaleId: 1, discountedPrice: 10000, saleQuantityLimit: 5, quantitySold: 0, availableStock: 5, ...o })
 const sale = (o) => ({ id: 1, name: 'S', startDate: '2026-11-01', endDate: '2026-11-07', status: 'ACTIVE', items: [], ...o })
 const manga = [{ id: 1, title: 'A' }, { id: 2, title: 'B' }]
 
@@ -22,18 +22,18 @@ describe('joinSales', () => {
     expect(input.map((s) => s.id)).toEqual([1, 2, 3, 4])
   })
 
-  it('marks sold out when limit equals sold', () => {
-    const [s] = joinSales([sale({ items: [item({ saleQuantityLimit: 5, quantitySold: 5 })] })], manga)
+  it('marks sold out when availableStock is 0 even if limit - sold is positive', () => {
+    const [s] = joinSales([sale({ items: [item({ saleQuantityLimit: 5, quantitySold: 0, availableStock: 0 })] })], manga)
     expect(s.items[0]).toMatchObject({ remaining: 0, soldOut: true })
   })
 
-  it('clamps remaining to 0 when oversold', () => {
-    const [s] = joinSales([sale({ items: [item({ saleQuantityLimit: 5, quantitySold: 7 })] })], manga)
+  it('clamps negative availableStock to 0', () => {
+    const [s] = joinSales([sale({ items: [item({ availableStock: -2 })] })], manga)
     expect(s.items[0]).toMatchObject({ remaining: 0, soldOut: true })
   })
 
-  it('attaches manga and remaining, matching by String(mangaId)', () => {
-    const [s] = joinSales([sale({ items: [item({ mangaId: 2, quantitySold: 2 })] })], manga)
+  it('uses availableStock as remaining, matching manga by String(mangaId)', () => {
+    const [s] = joinSales([sale({ items: [item({ mangaId: 2, quantitySold: 0, availableStock: 3 })] })], manga)
     expect(s.items[0]).toMatchObject({ remaining: 3, soldOut: false, manga: { id: 2 } })
   })
 
@@ -49,12 +49,30 @@ describe('activePrices', () => {
       sale({ id: 1, items: [item({ flashSaleId: 1, discountedPrice: 20000 })] }),
       sale({ id: 2, items: [
         item({ flashSaleId: 2, discountedPrice: '18000' }),
-        item({ flashSaleId: 2, mangaId: 2, discountedPrice: 1000, saleQuantityLimit: 3, quantitySold: 3 }),
+        item({ flashSaleId: 2, mangaId: 2, discountedPrice: 1000, availableStock: 0 }),
       ] }),
       sale({ id: 3, status: 'UPCOMING', items: [item({ flashSaleId: 3, discountedPrice: 500 })] }),
     ])
-    expect(map.get('1')).toEqual({ discountedPrice: 18000, flashSaleId: 2 })
+    expect(map.get('1')).toEqual({ discountedPrice: 18000, flashSaleId: 2, flashSaleItemId: 1, availableStock: 5 })
     expect(map.has('2')).toBe(false)
+  })
+
+  it('skips items with availableStock 0 even if limit - sold is positive', () => {
+    const map = activePrices([sale({ items: [item({ saleQuantityLimit: 5, quantitySold: 0, availableStock: 0 })] })])
+    expect(map.has('1')).toBe(false)
+  })
+
+  it('exposes flashSaleItemId and availableStock', () => {
+    const p = activePrices([sale({ items: [item({ id: 11, availableStock: 4 })] })]).get('1')
+    expect(p).toMatchObject({ discountedPrice: 10000, flashSaleItemId: 11, availableStock: 4 })
+  })
+
+  it('picks an in-stock pricier item over a sold-out cheaper one', () => {
+    const p = activePrices([
+      sale({ id: 1, items: [item({ id: 12, discountedPrice: 15000, availableStock: 0 })] }),
+      sale({ id: 2, items: [item({ id: 11, discountedPrice: 19000, availableStock: 4 })] }),
+    ]).get('1')
+    expect(p).toMatchObject({ discountedPrice: 19000, flashSaleItemId: 11, availableStock: 4 })
   })
 })
 

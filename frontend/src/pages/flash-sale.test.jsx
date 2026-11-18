@@ -10,7 +10,7 @@ vi.mock('../lib/flashSale.js', () => ({ listFlashSales: vi.fn() }))
 vi.mock('../lib/manga.js', () => ({ listManga: vi.fn(), getManga: vi.fn(), createManga: vi.fn() }))
 vi.mock('../lib/cart.js', () => ({ getCart: vi.fn(async () => ({ id: 1, items: [], subTotal: 0 })), addCartItem: vi.fn(), removeCartItem: vi.fn() }))
 
-const item = (mangaId, discountedPrice, limit, sold, id = mangaId) => ({ id, flashSaleId: 1, mangaId, discountedPrice, saleQuantityLimit: limit, quantitySold: sold })
+const item = (mangaId, discountedPrice, availableStock, id = mangaId) => ({ id, flashSaleId: 1, mangaId, discountedPrice, saleQuantityLimit: 10, quantitySold: 0, availableStock })
 const sale = (over) => ({ id: 1, name: 'Autumn drop', status: 'ACTIVE', startDate: '2026-10-30', endDate: '2026-11-03', items: [], ...over })
 
 beforeEach(() => {
@@ -22,7 +22,7 @@ afterEach(() => vi.useRealTimers())
 
 describe('Flash Sale page', () => {
   it('shows a running sale with its items', async () => {
-    listFlashSales.mockResolvedValue([sale({ items: [item('m1', 15000, 10, 4), item('m2', 12000, 5, 5)] })])
+    listFlashSales.mockResolvedValue([sale({ items: [item('m1', 15000, 6), item('m2', 12000, 0)] })])
     renderApp('/flash-sale')
     expect(await screen.findByRole('heading', { name: 'Autumn drop' })).toBeTruthy()
     expect(screen.getByText('30 Oct – 3 Nov')).toBeTruthy()
@@ -39,7 +39,7 @@ describe('Flash Sale page', () => {
 
   it('shows an upcoming sale and hides ended ones', async () => {
     listFlashSales.mockResolvedValue([
-      sale({ id: 2, name: 'Winter drop', status: 'UPCOMING', startDate: '2026-11-03', endDate: '2026-11-05', items: [item('m3', 30000, 5, 0)] }),
+      sale({ id: 2, name: 'Winter drop', status: 'UPCOMING', startDate: '2026-11-03', endDate: '2026-11-05', items: [item('m3', 30000, 5)] }),
       sale({ id: 3, name: 'Old drop', status: 'ENDED' }),
       sale({ id: 4, name: 'Pulled drop', status: 'CANCELLED' }),
     ])
