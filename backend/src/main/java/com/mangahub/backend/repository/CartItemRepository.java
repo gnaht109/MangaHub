@@ -28,6 +28,15 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long>{
           AND ci.reservedUntil > :now
     """)
     int countReservedRegularStock(@Param("mangaId") Long mangaId, @Param("now") LocalDateTime now);
+  
+    @Query("""
+        SELECT COALESCE(SUM(ci.quantity), 0) FROM CartItem ci
+        WHERE ci.manga.id = :mangaId
+          AND ci.flashSaleItem IS NULL
+          AND ci.reservedUntil > :now
+          AND ci.id <> :cartItemId
+    """)
+    int stockReservedByOthers(@Param("mangaId") Long mangaId, @Param("now") LocalDateTime now, @Param("cartItemId") Long cartItemId);
 
     @Query("""
         SELECT ci.manga.id AS mangaId, COALESCE(SUM(ci.quantity), 0) AS count
@@ -46,6 +55,16 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long>{
     int countReservedFlashSaleStock(@Param("flashSaleItemId") Long flashSaleItemId, @Param("now") LocalDateTime now);
 
     @Query("""
+        SELECT COALESCE(SUM(ci.quantity), 0) FROM CartItem ci
+        WHERE ci.flashSaleItem.id = :flashSaleItemId
+          AND ci.reservedUntil > :now
+          AND ci.id <> :cartItemId
+    """)
+    int flashSaleStockReservedByOthers(@Param("flashSaleItemId") Long flashSaleItemId, @Param("now") LocalDateTime now, @Param("cartItemId") Long cartItemId);
+
+
+
+    @Query("""
         SELECT ci.flashSaleItem.id AS flashSaleItemId, COALESCE(SUM(ci.quantity), 0) AS count
         FROM CartItem ci
         WHERE ci.flashSaleItem.id IN :flashSaleItemIds
@@ -61,7 +80,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long>{
     // delete all manga items from cart when a manga is deleted
     @Modifying 
     @Query("DELETE FROM CartItem ci WHERE ci.manga.id = :mangaId")
-    void deleteAllById(@Param("mangaId") Long mangaId);
+    void deleteByMangaId(@Param("mangaId") Long mangaId);
 
     // delete expired cart items
     @Modifying 

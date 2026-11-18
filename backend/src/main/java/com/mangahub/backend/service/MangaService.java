@@ -54,7 +54,7 @@ public class MangaService {
                         .orElseThrow(() -> new AppException(ErrorCode.MANGA_NOT_FOUND));
 
         // clean up cart items and flash sale items to prevent foreign key constraints
-        cartItemRepository.deleteAllById(mangaId);
+        cartItemRepository.deleteByMangaId(mangaId);
         flashSaleItemRepository.deleteAllById(mangaId);
 
         mangaRepository.delete(manga);
