@@ -55,7 +55,7 @@ describe('MangaDetail', () => {
     addCartItem.mockResolvedValue({ id: 1, items: [], subTotal: 0 })
     renderApp('/manga/m1')
     await userEvent.click(await screen.findByRole('button', { name: 'Add to cart' }))
-    expect(addCartItem).toHaveBeenCalledWith('m1', 1)
+    expect(addCartItem).toHaveBeenCalledWith('m1', 1, undefined)
     expect(await screen.findByText('Added to your cart.')).toBeTruthy()
     expect(screen.getByRole('link', { name: 'View cart' }).getAttribute('href')).toBe('/cart')
   })

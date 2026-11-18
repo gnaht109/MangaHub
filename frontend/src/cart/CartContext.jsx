@@ -55,7 +55,7 @@ export function CartProvider({ children }) {
   const value = {
     cart, status, error, pending,
     count: cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0,
-    add: (mangaId, quantity = 1) => mutate(() => addCartItem(mangaId, quantity)),
+    add: (mangaId, quantity = 1, flashSaleItemId) => mutate(() => addCartItem(mangaId, quantity, flashSaleItemId)),
     remove: (cartItemId) => mutate(() => removeCartItem(cartItemId)),
     setQuantity: (cartItemId, quantity) => mutate(() => setCartItemQuantity(cartItemId, quantity)),
     refresh: () => (userId ? load(userId, () => current.current === userId, true) : Promise.resolve()),
