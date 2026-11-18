@@ -40,7 +40,7 @@ public class CartService {
     CartMapper cartMapper;
     EntityManager entityManager;
 
-    private final int RESERVATION_MINUTES = 1;
+    private final int RESERVATION_MINUTES = 15;
 
     @Transactional 
     public CartResponse getCart(Long userId){
@@ -111,19 +111,46 @@ public class CartService {
     @Transactional
     public CartResponse updateQuantity(Long userId, Long cartItemId, int quantity){
         Cart cart = findOrCreateCart(userId);
+        LocalDateTime now = LocalDateTime.now();
+
+       // removes expired cart items when a user updates a cart item's quantity
+        cart.getItems().removeIf(i -> i.getReservedUntil() != null && i.getReservedUntil().isBefore(now));
+
         CartItem item = cart.findItemById(cartItemId)
             .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
         
-        // FlashSaleItem flashSaleItem = item.getFlashSaleItem();
-        // if(flashSaleItem != null) {
-
-        // }
-        
         if (quantity == 0) {
             cart.removeItemById(cartItemId);
-        } else {
-            item.setQuantity(quantity);
+            return cartMapper.toCartResponse(cart);
+        
         }
+        FlashSaleItem flashSaleItem = item.getFlashSaleItem();
+        int availableStock;
+
+        if(flashSaleItem != null) {
+
+            // count stocks being reserved by other carts
+            int reservedByOthers = cartItemRepository.flashSaleStockReservedByOthers(flashSaleItem.getId(), now, item.getId());
+            int maxStock = flashSaleItem.getSaleQuantityLimit();
+            int quantitySold = flashSaleItem.getQuantitySold();
+            availableStock = maxStock - quantitySold - reservedByOthers;
+        } else {
+            Manga manga = item.getManga();
+
+            // count flash sale stocks being reserved by other carts
+            int reservedByOthers = cartItemRepository.stockReservedByOthers(manga.getId(), now, item.getId());
+            int maxStock = manga.getStockQuantity();
+
+            availableStock = maxStock - reservedByOthers;
+        }
+
+
+        if(quantity > availableStock) {
+            throw new AppException(ErrorCode.OUT_OF_STOCK);
+        }
+
+        item.setQuantity(quantity);
+
         return cartMapper.toCartResponse(cart);
     }
 

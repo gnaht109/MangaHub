@@ -19,7 +19,7 @@ public enum ErrorCode {
     // MANGA
     MANGA_NOT_FOUND(404, "Manga not found", HttpStatus.NOT_FOUND),
     MANGA_ALREADY_EXISTS(409, "This manga already exists.", HttpStatus.CONFLICT),
-    OUT_OF_STOCK(500, "This item is out of stock.", HttpStatus.INTERNAL_SERVER_ERROR),
+    OUT_OF_STOCK(409, "This item is out of stock.", HttpStatus.INTERNAL_SERVER_ERROR),
     
     // FLASHSALE
     INVALID_FLASH_SALE_DATES(400, "The end date cannot be set before the starting date or today's date.", HttpStatus.BAD_REQUEST),
@@ -29,11 +29,12 @@ public enum ErrorCode {
 
     // CART
     CART_ITEM_NOT_FOUND(404, "This volume is not in your cart.", HttpStatus.NOT_FOUND),
+    MAX_CART_QUANTITY_EXCEEDED(400, "This cart item's maximum quantity exceeded. You can't add any more", HttpStatus.BAD_REQUEST),
 
     // FLASHSALEITEM
     DUPLICATE_FLASH_SALE_ITEM(409, "This item has already been added.", HttpStatus.CONFLICT),
     INVALID_DISCOUNTED_PRICE(400, "The discounted price must be lower than the base price.", HttpStatus.BAD_REQUEST),
-    FLASH_SALE_ITEM_OUT_OF_STOCK(500, "This flash sale item is out of stock.", HttpStatus.INTERNAL_SERVER_ERROR),
+    FLASH_SALE_ITEM_OUT_OF_STOCK(409, "This flash sale item is out of stock.", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // GENRE
     GENRE_ALREADY_EXISTS(409, "This genre already exists.", HttpStatus.CONFLICT),

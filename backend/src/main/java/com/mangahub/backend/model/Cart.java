@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.mangahub.backend.enums.CartStatus;
+import com.mangahub.backend.exception.AppException;
+import com.mangahub.backend.exception.ErrorCode;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,11 +52,24 @@ public class Cart {
     @Builder.Default
     List<CartItem> items = new ArrayList<>();
 
+    public static final int MAX_QUANTITY_PER_ITEM = 10;
+
+
     // ------------------Helper methods------------------//
         public void addOrIncreaseItem(Manga manga, FlashSaleItem flashSaleItem, int quantity, LocalDateTime reservedUntil) {
         findItem(manga.getId(), flashSaleItem).ifPresentOrElse(
-            existing -> existing.setQuantity(existing.getQuantity() + quantity),
+            existing -> {
+                int newQuantity = existing.getQuantity() + quantity;
+                if(newQuantity > MAX_QUANTITY_PER_ITEM) {
+                    throw new AppException(ErrorCode.MAX_CART_QUANTITY_EXCEEDED);
+                }
+                existing.setQuantity(newQuantity);
+                existing.setReservedUntil(reservedUntil);
+            },
             () -> {
+                if(quantity > MAX_QUANTITY_PER_ITEM) {
+                    throw new AppException(ErrorCode.MAX_CART_QUANTITY_EXCEEDED);
+                }
                 CartItem item = new CartItem();
                 item.setCart(this);
                 item.setManga(manga);
