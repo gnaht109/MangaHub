@@ -14,6 +14,9 @@ import com.mangahub.backend.dto.request.MangaCreateRequest;
 import com.mangahub.backend.dto.response.ApiResponse;
 import com.mangahub.backend.dto.response.MangaResponse;
 import com.mangahub.backend.service.MangaService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PathVariable;
 
 import lombok.AccessLevel;
@@ -45,7 +48,7 @@ public class MangaController {
     }
 
     @PostMapping
-    ApiResponse<MangaResponse> createManga(@RequestBody MangaCreateRequest mangaCreateRequest) {
+    ApiResponse<MangaResponse> createManga(@Valid @RequestBody MangaCreateRequest mangaCreateRequest) {
         MangaResponse createdManga = mangaService.createManga(mangaCreateRequest);
         return ApiResponse.<MangaResponse>builder()
                 .data(createdManga)
