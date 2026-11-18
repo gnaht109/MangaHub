@@ -14,11 +14,12 @@ export function validateSignup(values) {
   return { ...errors, ...validateLogin(values) }
 }
 
-export function validateTitle({ title, author, basePrice }) {
+export function validateTitle({ title, author, basePrice, stockQuantity = '' }) {
   const errors = {}
   if (!title.trim()) errors.title = 'Title is required'
   if (!author.trim()) errors.author = 'Author is required'
   if (!basePrice.trim()) errors.basePrice = 'Base price is required'
   else if (!/^\d+$/.test(basePrice.trim())) errors.basePrice = 'Enter a whole number of đồng, e.g. 45000'
+  if (stockQuantity.trim() && !/^\d+$/.test(stockQuantity.trim())) errors.stockQuantity = 'Enter a whole number, e.g. 20'
   return errors
 }
