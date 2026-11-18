@@ -14,7 +14,7 @@ export function signInAs(user, seconds = 3600) {
 }
 
 export const sampleManga = [
-  { id: 'm1', title: 'Đảo Hải Tặc', author: 'Eiichiro Oda', description: 'Pirates.', basePrice: 25000 },
-  { id: 'm2', title: 'Naruto', author: 'Masashi Kishimoto', description: null, basePrice: 22000 },
-  { id: 'm3', title: 'Monster', author: 'Naoki Urasawa', description: 'A doctor.', basePrice: 45000 },
+  { id: 'm1', title: 'Đảo Hải Tặc', author: 'Eiichiro Oda', description: 'Pirates.', basePrice: 25000, availableStock: 20 },
+  { id: 'm2', title: 'Naruto', author: 'Masashi Kishimoto', description: null, basePrice: 22000, availableStock: 20 },
+  { id: 'm3', title: 'Monster', author: 'Naoki Urasawa', description: 'A doctor.', basePrice: 45000, availableStock: 20 },
 ]

@@ -51,6 +51,7 @@
 .author { color: var(--ink-soft); font-size: var(--fs-h3); }
 .description { max-width: 60ch; white-space: pre-line; }
 .muted { color: var(--ink-soft); }
+.stock { margin: 0; color: var(--ink-soft); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
 
 @media (max-width: 1023px) {
