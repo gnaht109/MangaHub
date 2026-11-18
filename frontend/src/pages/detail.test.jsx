@@ -109,6 +109,17 @@ describe('MangaDetail', () => {
     expect(addCartItem).toHaveBeenCalledWith('m1', 1, 11)
   })
 
+  it('adds the sale item the page shows even when the URL id differs in form', async () => {
+    signInAs(customer)
+    getManga.mockResolvedValue(sampleManga[0]) // backend normalises /manga/007 to id m1
+    listFlashSales.mockResolvedValue([saleFor('m1', 19000)])
+    addCartItem.mockResolvedValue({ id: 1, items: [], subTotal: 0 })
+    renderApp('/manga/007')
+    await screen.findByText('19.000 ₫')
+    await userEvent.click(screen.getByRole('button', { name: 'Add to cart' }))
+    expect(addCartItem).toHaveBeenCalledWith('007', 1, 11)
+  })
+
   it('adds the cheapest live sale item', async () => {
     signInAs(customer)
     getManga.mockResolvedValue(sampleManga[0])

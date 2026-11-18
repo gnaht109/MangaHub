@@ -42,7 +42,7 @@ export default function MangaDetail() {
 
   async function addToCart() {
     if (!user) return navigate(`/login?next=${encodeURIComponent(`/manga/${id}`)}`)
-    const flashSaleItemId = activePrices(sales).get(String(id))?.flashSaleItemId
+    const flashSaleItemId = activePrices(sales).get(String(state.manga.id))?.flashSaleItemId
     const { ok, error } = await add(id, 1, flashSaleItemId)
     if (ok) setCartNote({ ok: true })
     else if (error) setCartNote({ error: error.message })
