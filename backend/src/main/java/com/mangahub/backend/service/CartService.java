@@ -2,12 +2,14 @@ package com.mangahub.backend.service;
 
 import com.mangahub.backend.repository.FlashSaleItemRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
 import com.mangahub.backend.dto.request.AddCartItemRequest;
 import com.mangahub.backend.dto.response.CartResponse;
+import com.mangahub.backend.enums.FlashSaleStatus;
 import com.mangahub.backend.exception.ErrorCode;
 import com.mangahub.backend.repository.CartItemRepository;
 import com.mangahub.backend.repository.CartRepository;
@@ -23,6 +25,7 @@ import lombok.experimental.FieldDefaults;
 
 import com.mangahub.backend.model.Cart;
 import com.mangahub.backend.model.CartItem;
+import com.mangahub.backend.model.FlashSale;
 import com.mangahub.backend.model.FlashSaleItem;
 import com.mangahub.backend.model.Manga;
 import com.mangahub.backend.repository.UserRepository;
@@ -72,6 +75,16 @@ public class CartService {
             if(!flashSaleItem.getManga().getId().equals(manga.getId())) {
                 throw new AppException(ErrorCode.INVALID_INPUT);
             }
+
+            // check if item is still on sale
+            FlashSale flashSale = flashSaleItem.getFlashSale();
+            boolean isActive = flashSale.getStatus() != FlashSaleStatus.CANCELLED
+            && !LocalDate.now().isBefore(flashSale.getStartDate())
+            && !LocalDate.now().isAfter(flashSale.getEndDate());
+
+            if (!isActive) {
+                throw new AppException(ErrorCode.FLASH_SALE_ALREADY_ENDED);
+            }            
 
             int reservedCount = cartItemRepository.countReservedFlashSaleStock(flashSaleItem.getId(), now);
             int maxStock = flashSaleItem.getSaleQuantityLimit();

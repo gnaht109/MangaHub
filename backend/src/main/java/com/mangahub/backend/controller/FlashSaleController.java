@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController 
-@RequestMapping("/api/flash-sales")
+@RequestMapping("/api/flash-sale")
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -32,7 +32,7 @@ public class FlashSaleController {
     FlashSaleService flashSaleService;
 
     @GetMapping
-    ApiResponse<List<FlashSaleResponse>> getAllFlashSales() {
+    public ApiResponse<List<FlashSaleResponse>> getAllFlashSales() {
         List<FlashSaleResponse> flashSales = flashSaleService.getAll();
         return ApiResponse.<List<FlashSaleResponse>>builder()
                         .data(flashSales)
@@ -40,7 +40,7 @@ public class FlashSaleController {
     }
 
     @GetMapping("/active")
-    ApiResponse<List<FlashSaleResponse>> getActiveFlashSales() {
+    public ApiResponse<List<FlashSaleResponse>> getActiveFlashSales() {
         List<FlashSaleResponse> activeFlashSales = flashSaleService.getActive();
         return ApiResponse.<List<FlashSaleResponse>>builder()
                         .data(activeFlashSales)
@@ -56,7 +56,7 @@ public class FlashSaleController {
     // }
 
     @PostMapping
-    ApiResponse<FlashSaleResponse> createFlashSale(@Valid @RequestBody FlashSaleCreateRequest request) {
+    public ApiResponse<FlashSaleResponse> createFlashSale(@Valid @RequestBody FlashSaleCreateRequest request) {
         FlashSaleResponse flashSale = flashSaleService.createFlashSale(request);
         return ApiResponse.<FlashSaleResponse>builder()
                         .data(flashSale)
@@ -64,7 +64,7 @@ public class FlashSaleController {
     }
 
     @PostMapping("/{id}/cancel")
-    ApiResponse<FlashSaleResponse> cancelFlashSale(@PathVariable("id") Long id) {
+    public ApiResponse<FlashSaleResponse> cancelFlashSale(@PathVariable("id") Long id) {
         FlashSaleResponse cancelledFlashSale = flashSaleService.cancelFlashSale(id);
         return ApiResponse.<FlashSaleResponse>builder()
                         .data(cancelledFlashSale)

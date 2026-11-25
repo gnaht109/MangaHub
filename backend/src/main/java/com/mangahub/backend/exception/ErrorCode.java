@@ -29,12 +29,21 @@ public enum ErrorCode {
 
     // CART
     CART_ITEM_NOT_FOUND(404, "This volume is not in your cart.", HttpStatus.NOT_FOUND),
+    CART_RESERVATION_EXPIRED(410, "This cart has expired items.", HttpStatus.GONE),
+    CART_NOT_FOUND(404, "This cart doesn't exist", HttpStatus.NOT_FOUND),
+    CART_EMPTY(400, "This cart is empty", HttpStatus.BAD_REQUEST),
     MAX_CART_QUANTITY_EXCEEDED(400, "This cart item's maximum quantity exceeded. You can't add any more", HttpStatus.BAD_REQUEST),
 
     // FLASHSALEITEM
     DUPLICATE_FLASH_SALE_ITEM(409, "This item has already been added.", HttpStatus.CONFLICT),
     INVALID_DISCOUNTED_PRICE(400, "The discounted price must be lower than the base price.", HttpStatus.BAD_REQUEST),
     FLASH_SALE_ITEM_OUT_OF_STOCK(409, "This flash sale item is out of stock.", HttpStatus.CONFLICT),
+
+    // ORDER
+    ORDER_NOT_FOUND(404, "This order is not found.", HttpStatus.NOT_FOUND),
+    ORDER_CANNOT_CANCEL(400, "This order cannot be cancelled", HttpStatus.BAD_REQUEST),
+    INVALID_ORDER(400, "This order is invalid (must be pending)", HttpStatus.BAD_REQUEST),
+
 
     // GENRE
     GENRE_ALREADY_EXISTS(409, "This genre already exists.", HttpStatus.CONFLICT),

@@ -32,7 +32,7 @@ public class MangaController {
     MangaService mangaService;
 
     @GetMapping
-    ApiResponse<List<MangaResponse>> getAllManga() {
+    public ApiResponse<List<MangaResponse>> getAllManga() {
         List<MangaResponse> mangaList = mangaService.getAll();
         return ApiResponse.<List<MangaResponse>>builder()
                 .data(mangaList)
@@ -40,7 +40,7 @@ public class MangaController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<MangaResponse> getMangaById(@PathVariable Long id) {
+    public ApiResponse<MangaResponse> getMangaById(@PathVariable Long id) {
         MangaResponse manga = mangaService.getById(id);
         return ApiResponse.<MangaResponse>builder()
                 .data(manga)
@@ -48,7 +48,7 @@ public class MangaController {
     }
 
     @PostMapping
-    ApiResponse<MangaResponse> createManga(@Valid @RequestBody MangaCreateRequest mangaCreateRequest) {
+    public ApiResponse<MangaResponse> createManga(@Valid @RequestBody MangaCreateRequest mangaCreateRequest) {
         MangaResponse createdManga = mangaService.createManga(mangaCreateRequest);
         return ApiResponse.<MangaResponse>builder()
                 .data(createdManga)
@@ -56,7 +56,7 @@ public class MangaController {
     }
 
     @DeleteMapping("/{id}")
-    ApiResponse<Void> deleteManga(@PathVariable Long id) {
+    public ApiResponse<Void> deleteManga(@PathVariable Long id) {
         mangaService.deleteManga(id);
         return ApiResponse.<Void>builder()
                 .message("Manga deleted successfully.")

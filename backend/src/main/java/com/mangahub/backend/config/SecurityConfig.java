@@ -44,8 +44,9 @@ public class SecurityConfig {
                         // remember to change these to .hasRole("ADMIN")
                         .requestMatchers("/api/manga/**").permitAll()
                         .requestMatchers("/api/genres/**").permitAll() 
-                        .requestMatchers("/api/flash-sales/**").permitAll()
+                        .requestMatchers("/api/flash-sale/**").permitAll()
                         .requestMatchers("/api/cart/**").authenticated()
+                        .requestMatchers("/api/orders/**").authenticated()
                         .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
