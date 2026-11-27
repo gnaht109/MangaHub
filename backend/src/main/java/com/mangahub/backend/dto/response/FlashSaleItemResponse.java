@@ -18,7 +18,5 @@ public class FlashSaleItemResponse {
     Long mangaId;
     Long flashSaleId;
     BigDecimal discountedPrice;
-    Integer saleQuantityLimit;
-    Integer quantitySold;
-    Integer availableStock;
+    Integer stockQuantity;        
 }

@@ -45,8 +45,8 @@ public class Manga {
     @Column(name = "price", precision = 10, scale = 2, nullable = false)
     BigDecimal basePrice;
 
-    @Column(name = "quantity", nullable = false)
-    @Builder.Default
-    Integer stockQuantity = 0;
+    // @Column(name = "quantity", nullable = false)
+    // @Builder.Default
+    // Integer stockQuantity = 0;
 }
 

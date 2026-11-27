@@ -85,9 +85,9 @@ public class OrderService {
             int qty = cartItem.getQuantity();
 
             // prevent oversale
-            if(manga.getStockQuantity() < qty) {
-                throw new AppException(ErrorCode.OUT_OF_STOCK);
-            }
+            // if(manga.getStockQuantity() < qty) {
+            //     throw new AppException(ErrorCode.OUT_OF_STOCK);
+            // }
 
             // copy price snapshot at checkout time (so that future prices won't change past orders)
             BigDecimal originalPrice = manga.getBasePrice();
@@ -107,16 +107,16 @@ public class OrderService {
                 }
 
                 // prevent oversale
-                int remainingSale = flashSaleItem.getSaleQuantityLimit() - flashSaleItem.getQuantitySold();
-                if(remainingSale < qty) {
-                    throw new AppException(ErrorCode.FLASH_SALE_ITEM_OUT_OF_STOCK);
-                }
+                // int remainingSale = flashSaleItem.getSaleQuantityLimit() - flashSaleItem.getQuantitySold();
+                // if(remainingSale < qty) {
+                //     throw new AppException(ErrorCode.FLASH_SALE_ITEM_OUT_OF_STOCK);
+                // }
 
                 BigDecimal discountedPrice = flashSaleItem.getDiscountedPrice();
                 unitPrice = discountedPrice;
                 
-                // track how many sale items has been sold
-                flashSaleItem.setQuantitySold(flashSaleItem.getQuantitySold() + qty);
+                // // track how many sale items has been sold
+                // flashSaleItem.setQuantitySold(flashSaleItem.getQuantitySold() + qty);
             } else {
                 // normal price
                 unitPrice = originalPrice;
@@ -132,7 +132,7 @@ public class OrderService {
                     .flashSaleItem(flashSaleItem)
                     .quantity(qty)
                     .originalPrice(originalPrice)
-                    .unitPrice(unitPrice)
+                    // .unitPrice(unitPrice)
                     .subtotal(subtotal)
                     .build();
 
@@ -172,10 +172,10 @@ public class OrderService {
             int qty = item.getQuantity();
 
             if(flashSaleItem != null) {
-                flashSaleItem.setQuantitySold(flashSaleItem.getQuantitySold() + qty);
+                // flashSaleItem.setQuantitySold(flashSaleItem.getQuantitySold() + qty);
             }
 
-            manga.setStockQuantity(manga.getStockQuantity() - qty);
+            // manga.setStockQuantity(manga.getStockQuantity() - qty);
         }
         
         // set shipping address, set payment method -> confirm order
@@ -205,12 +205,12 @@ public class OrderService {
         // restore physical stock and decrement flash sale quantity sold
         for(OrderItem item : order.getItems()) {
             Manga manga = item.getManga();
-            manga.setStockQuantity(manga.getStockQuantity() + item.getQuantity());
+            // manga.setStockQuantity(manga.getStockQuantity() + item.getQuantity());
 
             FlashSaleItem flashSaleItem = item.getFlashSaleItem();
             if(flashSaleItem != null) {
-                int restoreSold = Math.max(0, flashSaleItem.getQuantitySold() - item.getQuantity());
-                flashSaleItem.setQuantitySold(restoreSold);
+                // int restoreSold = Math.max(0, flashSaleItem.getQuantitySold() - item.getQuantity());
+                // flashSaleItem.setQuantitySold(restoreSold);
             }
         }
 

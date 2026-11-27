@@ -17,10 +17,8 @@ public interface MangaMapper {
     MangaMapper INSTANCE = Mappers.getMapper(MangaMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "stockQuantity", defaultValue = "0")
     Manga toEntityManga(MangaCreateRequest request);
 
-    @Mapping(target = "availableStock", expression = "java(Math.max(0, manga.getStockQuantity() - reservedStock))")
     MangaResponse toMangaResponse(Manga manga, int reservedStock);
 
     default List<MangaResponse> toMangaResponses(List<Manga> mangas, Map<Long, Integer> reservedMap) {

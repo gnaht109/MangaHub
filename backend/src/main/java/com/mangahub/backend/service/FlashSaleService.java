@@ -14,7 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.mangahub.backend.dto.request.FlashSaleCreateRequest;
-import com.mangahub.backend.dto.request.FlashSaleItemCreateRequest;
+import com.mangahub.backend.dto.request.UpdateFlashSaleItemRequest;
+import com.mangahub.backend.dto.request.UpdateFlashSaleRequest;
+import com.mangahub.backend.dto.request.AddFlashSaleItemRequest;
 import com.mangahub.backend.dto.response.FlashSaleResponse;
 import com.mangahub.backend.enums.FlashSaleStatus;
 import com.mangahub.backend.exception.AppException;
@@ -47,39 +49,13 @@ public class FlashSaleService {
     public List<FlashSaleResponse> getAll() {
 
         List<FlashSale> flashSales = flashSaleRepository.findAllByOrderByStartDateDesc();
-        List<Long> itemIds = flashSales.stream()
-                        .flatMap(flashsale -> flashsale.getItems().stream())
-                        .map(flashsaleitem -> flashsaleitem.getId())
-                        .toList();
-        Map<Long, Integer> reservedMap = cartItemRepository.findReservedFlashSaleStockByIds(itemIds, LocalDateTime.now())
-                        .stream()
-                        .collect(Collectors.toMap(
-                            rc -> rc.getFlashSaleItemId(),
-                            rc -> rc.getCount()
-                        ));
-
-        return mapper.toFlashSaleResponses(
-            flashSales, reservedMap
-        );
+        return mapper.toFlashSaleResponses(flashSales);
     }
 
     public List<FlashSaleResponse> getActive() {
 
         List<FlashSale> activeFlashSales = flashSaleRepository.findActiveOn(LocalDate.now());
-        List<Long> itemIds = activeFlashSales.stream()
-                        .flatMap(flashsale -> flashsale.getItems().stream())
-                        .map(flashsaleitem -> flashsaleitem.getId())
-                        .toList();
-        Map<Long, Integer> reservedMap = cartItemRepository.findReservedFlashSaleStockByIds(itemIds, LocalDateTime.now())
-                        .stream()
-                        .collect(Collectors.toMap(
-                            rc -> rc.getFlashSaleItemId(),
-                            rc -> rc.getCount()
-                        ));
-
-        return mapper.toFlashSaleResponses(
-            activeFlashSales, reservedMap
-        );
+        return mapper.toFlashSaleResponses(activeFlashSales);
     }
 
     public FlashSaleResponse getById(Long id) {
@@ -118,11 +94,10 @@ public class FlashSaleService {
         // who created the flashsale
         flashSale.setUser(getUser());
 
-        // add items and save flashsale
-        addItems(flashSale, request.getItems());
+        // save flashsale
         flashSaleRepository.save(flashSale);
 
-        FlashSaleResponse response = mapper.toFlashSaleResponse(flashSale, Map.of());
+        FlashSaleResponse response = mapper.toFlashSaleResponse(flashSale);
         response.setStatus(flashSale.getStatus());
         return response;
     }
@@ -143,7 +118,157 @@ public class FlashSaleService {
         return mapper.toFlashSaleResponse(flashSale);
     }
 
+    @Transactional 
+    public FlashSaleResponse editFlashSale(Long flashSaleId, UpdateFlashSaleRequest request) {
+        FlashSale flashSale = flashSaleRepository.findById(flashSaleId)
+            .orElseThrow(() -> new AppException(ErrorCode.FLASH_SALE_NOT_FOUND));
 
+        LocalDate today = LocalDate.now();
+
+        if (flashSale.getStatus() == FlashSaleStatus.CANCELLED || today.isAfter(flashSale.getEndDate())) {
+        throw new AppException(ErrorCode.FLASH_SALE_ALREADY_ENDED);
+        }
+
+        LocalDate startDate = request.getStartDate() != null ? request.getStartDate() : flashSale.getStartDate();
+        LocalDate endDate = request.getEndDate() != null ? request.getEndDate() : flashSale.getEndDate();
+
+        if (startDate == null || endDate == null || endDate.isBefore(startDate) || endDate.isBefore(today)) {
+            throw new AppException(ErrorCode.INVALID_FLASH_SALE_DATES);
+        }
+
+
+        if (request.getName() != null && !request.getName().isBlank()) {
+            String trimmedName = request.getName().trim();
+            if (!flashSale.getName().equalsIgnoreCase(trimmedName)
+                    && flashSaleRepository.existsByNameIgnoreCase(trimmedName)) {
+                throw new AppException(ErrorCode.FLASH_SALE_ALREADY_EXISTS);
+            }
+            flashSale.setName(trimmedName);
+        }
+
+        flashSale.setStartDate(startDate);
+        flashSale.setEndDate(endDate);
+        flashSale.setStatus(resolveStatus(startDate, endDate));
+
+        FlashSale saved = flashSaleRepository.saveAndFlush(flashSale);
+
+        return mapper.toFlashSaleResponse(saved);
+    }
+
+
+    // update price or quantity
+    @Transactional 
+    public FlashSaleResponse editFlashSaleItem(Long flashSaleId, Long itemId, UpdateFlashSaleItemRequest request) {
+        FlashSale flashSale = flashSaleRepository.findById(flashSaleId)
+        .orElseThrow(() -> new AppException(ErrorCode.FLASH_SALE_NOT_FOUND));
+
+        // safety check for flash sale status
+        if (flashSale.getStatus() == FlashSaleStatus.CANCELLED || LocalDate.now().isAfter(flashSale.getEndDate())) {
+            throw new AppException(ErrorCode.FLASH_SALE_ALREADY_ENDED);
+        }
+
+        // check if item exists
+        FlashSaleItem item = flashSale.getItems().stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.FLASH_SALE_ITEM_NOT_FOUND));
+
+        if(request.getDiscountedPrice() != null) {
+            if(request.getDiscountedPrice().compareTo(item.getManga().getBasePrice()) >= 0) {
+                throw new AppException(ErrorCode.INVALID_DISCOUNTED_PRICE);
+            }
+
+            item.setDiscountedPrice(request.getDiscountedPrice());
+        }
+
+        if(request.getStockQuantity() != null) {
+            if(request.getStockQuantity() < 0) {
+                throw new AppException(ErrorCode.INVALID_INPUT);
+            }
+
+            item.setStockQuantity(request.getStockQuantity());
+        }
+
+        FlashSale saved = flashSaleRepository.saveAndFlush(flashSale);
+        return mapper.toFlashSaleResponse(saved);
+    }
+
+    @Transactional 
+    public FlashSaleResponse addFlashSaleItem(Long flashSaleId, List<AddFlashSaleItemRequest> items) {
+        FlashSale flashSale = flashSaleRepository.findById(flashSaleId)
+        .orElseThrow(() -> new AppException(ErrorCode.FLASH_SALE_NOT_FOUND));
+
+        // check if flash sale has alr ended or alr been cancelled
+        boolean ended = LocalDate.now().isAfter(flashSale.getEndDate());
+        if(ended || flashSale.getStatus() == FlashSaleStatus.CANCELLED) {
+            throw new AppException(ErrorCode.FLASH_SALE_ALREADY_ENDED);
+        }
+        
+        
+        if(items == null || items.isEmpty()) {
+            throw new AppException(ErrorCode.FLASH_SALE_NOT_FOUND);
+        }
+
+        Set<Long> mangaIds = new HashSet<>();
+        for(AddFlashSaleItemRequest item : items) {
+            // add() returns false if there is a duplicate
+            if(!mangaIds.add(item.getMangaId())) {
+                throw new AppException(ErrorCode.DUPLICATE_FLASH_SALE_ITEM);
+            }
+        }
+  
+        // get and map out mangas with their id
+        Map<Long, Manga> mangaById = mangaRepository.findAllById(mangaIds)
+                            .stream().collect(Collectors.toMap(manga -> manga.getId(), Function.identity()));
+
+        // check if any manga is missing from the items
+        if(mangaById.size() != mangaIds.size()) {
+            throw new AppException(ErrorCode.MANGA_NOT_FOUND);
+        }
+
+        // add mangas
+        for(AddFlashSaleItemRequest item : items) {
+            Manga manga = mangaById.get(item.getMangaId());
+
+            // discounted price must be lower than base price
+            if(item.getDiscountedPrice().compareTo(manga.getBasePrice()) >= 0) {
+                throw new AppException(ErrorCode.INVALID_DISCOUNTED_PRICE);
+            }
+
+            FlashSaleItem flashSaleItem = mapper.toEntityFlashSaleItem(item);
+            flashSaleItem.setManga(manga);
+            flashSaleItem.setFlashSale(flashSale);
+
+            // cascade = ALL saves the items with the sale
+            flashSale.getItems().add(flashSaleItem);
+        }  
+
+        flashSaleRepository.save(flashSale);
+
+        
+        return mapper.toFlashSaleResponse(flashSale);
+    }
+
+    @Transactional 
+    public FlashSaleResponse removeFlashSaleItem(Long flashSaleId, Long itemId) {
+        FlashSale flashSale = flashSaleRepository.findById(flashSaleId)
+            .orElseThrow(() -> new AppException(ErrorCode.FLASH_SALE_NOT_FOUND));
+
+        if (flashSale.getStatus() == FlashSaleStatus.CANCELLED || LocalDate.now().isAfter(flashSale.getEndDate())) {
+            throw new AppException(ErrorCode.FLASH_SALE_ALREADY_ENDED);
+        }
+
+        FlashSaleItem item = flashSale.getItems().stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.FLASH_SALE_ITEM_NOT_FOUND));
+
+        // orphanRemoval = true on FlashSale.items will delete the item row on save/flush
+        flashSale.getItems().remove(item);
+
+        FlashSale saved = flashSaleRepository.saveAndFlush(flashSale);
+        return mapper.toFlashSaleResponse(saved);
+    }
     // get user from SecurityContextHolder, use repository, not User entity
     private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -168,14 +293,14 @@ public class FlashSaleService {
         return FlashSaleStatus.ACTIVE;
     }
 
-    private void addItems(FlashSale flashSale, List<FlashSaleItemCreateRequest> items) {
+    private void addItems(FlashSale flashSale, List<AddFlashSaleItemRequest> items) {
         if(items == null || items.isEmpty()) {
             return;
         }
 
         // check for manga duplicates
         Set<Long> mangaIds = new HashSet<>();
-        for(FlashSaleItemCreateRequest item : items) {
+        for(AddFlashSaleItemRequest item : items) {
             // add() returns false if there is a duplicate
             if(!mangaIds.add(item.getMangaId())) {
                 throw new AppException(ErrorCode.DUPLICATE_FLASH_SALE_ITEM);
@@ -192,7 +317,7 @@ public class FlashSaleService {
         }
 
         // add mangas
-        for(FlashSaleItemCreateRequest item : items) {
+        for(AddFlashSaleItemRequest item : items) {
             Manga manga = mangaById.get(item.getMangaId());
 
             // discounted price must be lower than base price

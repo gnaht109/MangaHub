@@ -38,6 +38,7 @@ public enum ErrorCode {
     DUPLICATE_FLASH_SALE_ITEM(409, "This item has already been added.", HttpStatus.CONFLICT),
     INVALID_DISCOUNTED_PRICE(400, "The discounted price must be lower than the base price.", HttpStatus.BAD_REQUEST),
     FLASH_SALE_ITEM_OUT_OF_STOCK(409, "This flash sale item is out of stock.", HttpStatus.CONFLICT),
+    FLASH_SALE_ITEM_NOT_FOUND(404, "This flash sale item is not found", HttpStatus.NOT_FOUND),
 
     // ORDER
     ORDER_NOT_FOUND(404, "This order is not found.", HttpStatus.NOT_FOUND),

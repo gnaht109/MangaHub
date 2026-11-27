@@ -32,6 +32,5 @@ public class FlashSaleCreateRequest {
     @NotNull 
     LocalDate endDate;
     
-    // @NotEmpty <-- leave empty for testing purposes
-    List<@Valid FlashSaleItemCreateRequest> items;
+    List<@Valid AddFlashSaleItemRequest> items;
 }

@@ -86,26 +86,26 @@ public class CartService {
                 throw new AppException(ErrorCode.FLASH_SALE_ALREADY_ENDED);
             }            
 
-            int reservedCount = cartItemRepository.countReservedFlashSaleStock(flashSaleItem.getId(), now);
-            int maxStock = flashSaleItem.getSaleQuantityLimit();
-            int quantitySold = flashSaleItem.getQuantitySold();
-            int remainingStock = maxStock - quantitySold - reservedCount;
+            // int reservedCount = cartItemRepository.countReservedFlashSaleStock(flashSaleItem.getId(), now);
+            // int maxStock = flashSaleItem.getSaleQuantityLimit();
+            // int quantitySold = flashSaleItem.getQuantitySold();
+            // int remainingStock = maxStock - quantitySold - reservedCount;
 
             // PREVENT OVERSELLING
-            if(request.getQuantity() > remainingStock) {
-                throw new AppException(ErrorCode.FLASH_SALE_ITEM_OUT_OF_STOCK);
-            }
+            // if(request.getQuantity() > remainingStock) {
+            //     throw new AppException(ErrorCode.FLASH_SALE_ITEM_OUT_OF_STOCK);
+            // }
 
             cart.addOrIncreaseItem(flashSaleItem.getManga(), flashSaleItem, request.getQuantity(), now.plusMinutes(RESERVATION_MINUTES));
         } else{
-            int reservedCount = cartItemRepository.countReservedRegularStock(manga.getId(), now);
-            int currentStock = manga.getStockQuantity();
-            int remainingStock = currentStock - reservedCount;
+            // int reservedCount = cartItemRepository.countReservedRegularStock(manga.getId(), now);
+            // int currentStock = manga.getStockQuantity();
+            // int remainingStock = currentStock - reservedCount;
 
-            // PREVENT OVERSELLING
-            if(request.getQuantity() > remainingStock) {
-                throw new AppException(ErrorCode.FLASH_SALE_ITEM_OUT_OF_STOCK);
-            }
+            // // PREVENT OVERSELLING
+            // if(request.getQuantity() > remainingStock) {
+            //     throw new AppException(ErrorCode.FLASH_SALE_ITEM_OUT_OF_STOCK);
+            // }
 
             cart.addOrIncreaseItem(manga, null, request.getQuantity(), now.plusMinutes(RESERVATION_MINUTES));
         }
@@ -143,24 +143,24 @@ public class CartService {
         if(flashSaleItem != null) {
 
             // count stocks being reserved by other carts
-            int reservedByOthers = cartItemRepository.flashSaleStockReservedByOthers(flashSaleItem.getId(), now, item.getId());
-            int maxStock = flashSaleItem.getSaleQuantityLimit();
-            int quantitySold = flashSaleItem.getQuantitySold();
-            availableStock = maxStock - quantitySold - reservedByOthers;
+            // int reservedByOthers = cartItemRepository.flashSaleStockReservedByOthers(flashSaleItem.getId(), now, item.getId());
+            // int maxStock = flashSaleItem.getSaleQuantityLimit();
+            // int quantitySold = flashSaleItem.getQuantitySold();
+            // availableStock = maxStock - quantitySold - reservedByOthers;
         } else {
             Manga manga = item.getManga();
 
             // count flash sale stocks being reserved by other carts
-            int reservedByOthers = cartItemRepository.stockReservedByOthers(manga.getId(), now, item.getId());
-            int maxStock = manga.getStockQuantity();
+            // int reservedByOthers = cartItemRepository.stockReservedByOthers(manga.getId(), now, item.getId());
+            // int maxStock = manga.getStockQuantity();
 
-            availableStock = maxStock - reservedByOthers;
+            // availableStock = maxStock - reservedByOthers;
         }
 
 
-        if(quantity > availableStock) {
-            throw new AppException(ErrorCode.OUT_OF_STOCK);
-        }
+        // if(quantity > availableStock) {
+        //     throw new AppException(ErrorCode.OUT_OF_STOCK);
+        // }
 
         item.setQuantity(quantity);
 

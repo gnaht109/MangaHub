@@ -44,10 +44,7 @@ public class FlashSaleItem {
     @Column(name = "discounted_price", nullable = false)
     BigDecimal discountedPrice;
 
-    @Column(name = "sale_quantity_limit", nullable = false)
-    Integer saleQuantityLimit;
-
-    @Column(name = "quantity_sold", nullable = false)
+    @Column(name = "stock_quantity", nullable = false)
     @Builder.Default
-    Integer quantitySold = 0;
+    Integer stockQuantity = 0;
 }

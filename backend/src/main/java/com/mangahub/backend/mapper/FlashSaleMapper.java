@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.mangahub.backend.dto.request.FlashSaleCreateRequest;
-import com.mangahub.backend.dto.request.FlashSaleItemCreateRequest;
+import com.mangahub.backend.dto.request.AddFlashSaleItemRequest;
 import com.mangahub.backend.dto.response.FlashSaleItemResponse;
 import com.mangahub.backend.dto.response.FlashSaleResponse;
 import com.mangahub.backend.enums.FlashSaleStatus;
@@ -28,40 +28,20 @@ public interface FlashSaleMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "flashSale", ignore = true)
-    @Mapping(target = "quantitySold", ignore = true)
     @Mapping(target = "manga", ignore = true)
-    FlashSaleItem toEntityFlashSaleItem(FlashSaleItemCreateRequest request);
+    FlashSaleItem toEntityFlashSaleItem(AddFlashSaleItemRequest request);
 
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "items", ignore = true)
     FlashSaleResponse toFlashSaleResponse(FlashSale flashSale);
 
-    // return Flash Sale with live availableStock on its items
-    default FlashSaleResponse toFlashSaleResponse(FlashSale flashSale, Map<Long, Integer> reservedMap) {
-        FlashSaleResponse response = toFlashSaleResponse(flashSale);
-        if(flashSale.getItems() != null) {
-            response.setItems(toFlashSaleItemResponses(flashSale.getItems(), reservedMap));
-        }
-        return response;
-    }
-
-    // return Flash Sales with live availableStock on its items
-    default List<FlashSaleResponse> toFlashSaleResponses(List<FlashSale> flashSales, Map<Long, Integer> reservedMap) {
-        return flashSales.stream()
-                    .map(flashSale -> toFlashSaleResponse(flashSale, reservedMap))
-                    .toList();
-    }
+    List<FlashSaleResponse> toFlashSaleResponses(List<FlashSale> flashSales);
 
     @Mapping(target = "mangaId", source = "flashSaleItem.manga.id")
     @Mapping(target = "flashSaleId", source = "flashSaleItem.flashSale.id")
-    @Mapping(target = "availableStock", expression = "java(Math.max(0, flashSaleItem.getSaleQuantityLimit() - flashSaleItem.getQuantitySold() - reservedStock))")    
-    FlashSaleItemResponse toFlashSaleItemResponse(FlashSaleItem flashSaleItem, int reservedStock);
+    FlashSaleItemResponse toFlashSaleItemResponse(FlashSaleItem flashSaleItem);
 
-    default List<FlashSaleItemResponse> toFlashSaleItemResponses(List<FlashSaleItem> flashSaleItems, Map<Long, Integer> reservedMap) {
-        return flashSaleItems.stream()
-                    .map(item -> toFlashSaleItemResponse(item, reservedMap.getOrDefault(item.getId(), 0)))
-                    .toList();
-    }
+    List<FlashSaleItemResponse> tFlashSaleItemResponses(List<FlashSaleItem> flashSaleItems);
+
 
     @AfterMapping 
     default void resolveStatus(FlashSale source, @MappingTarget FlashSaleResponse target) {

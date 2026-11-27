@@ -20,6 +20,4 @@ public class MangaResponse {
     String author;
     String description;
     BigDecimal basePrice;
-    Integer stockQuantity;
-    Integer availableStock;
 }
