@@ -102,6 +102,17 @@ describe('CartProvider', () => {
     expect(ctx.count).toBe(3)
   })
 
+  it('a failed change reloads the cart from the server', async () => {
+    signInAs(customer)
+    mount()
+    await waitFor(() => expect(ctx.count).toBe(3))
+    // The server dropped item 2 (expired reservation), so changing it 404s.
+    getCart.mockResolvedValue({ ...cart, items: [cart.items[0]], subTotal: 10 })
+    setCartItemQuantity.mockRejectedValue(new ApiError(404, 'This volume is not in your cart.'))
+    await act(async () => { await ctx.setQuantity(2, 3) })
+    expect(ctx.count).toBe(1)
+  })
+
   it('add failure resolves with the error and keeps the cart', async () => {
     signInAs(customer)
     mount()

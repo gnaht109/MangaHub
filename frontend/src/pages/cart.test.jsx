@@ -111,6 +111,16 @@ describe('Cart page', () => {
     expect(getCart).toHaveBeenCalledTimes(2)
   })
 
+  it('reloads the cart when the page is opened', async () => {
+    renderApp('/account')
+    await userEvent.click(await screen.findByRole('link', { name: 'Cart, 3 items' }))
+    expect(screen.getByRole('link', { name: 'Naruto' })).toBeTruthy()
+    getCart.mockResolvedValue({ id: 1, items: [], subTotal: 0 })
+    await userEvent.click(screen.getByRole('link', { name: 'Minh Nguyen' }))
+    await userEvent.click(screen.getByRole('link', { name: 'Cart, 3 items' }))
+    expect(await screen.findByText('Your cart is empty.')).toBeTruthy()
+  })
+
   it('sends guests to sign in', async () => {
     localStorage.clear()
     sessionStorage.clear()

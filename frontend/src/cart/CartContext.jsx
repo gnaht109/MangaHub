@@ -40,6 +40,8 @@ export function CartProvider({ children }) {
       if (current.current === owner) setState({ owner, cart, status: 'ready', error: null })
       return { ok: true, error: null }
     } catch (error) {
+      // A failed change usually means our copy is stale (e.g. an expired reservation): resync from the server.
+      await load(owner, () => current.current === owner, true)
       return { ok: false, error }
     } finally {
       if (current.current === owner) {

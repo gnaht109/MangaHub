@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import PageTitle from '../components/PageTitle.jsx'
 import Button from '../components/Button.jsx'
@@ -10,6 +10,9 @@ import styles from './Shells.module.css'
 export default function Cart() {
   const { cart, status, error, pending, remove, setQuantity, refresh } = useCart()
   const [changeError, setChangeError] = useState(null)
+
+  // The cart may have changed since it was loaded (expired reservations, other tabs). A first load is already in flight.
+  useEffect(() => { if (status === 'ready') refresh() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function change(call) {
     setChangeError(null)
